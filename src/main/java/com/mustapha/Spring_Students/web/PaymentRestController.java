@@ -1,6 +1,6 @@
 package com.mustapha.Spring_Students.web;
 
-import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
+import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.enums.PayementStatus;
 import com.mustapha.Spring_Students.enums.PayementType;
@@ -56,12 +56,12 @@ public class PaymentRestController {
     @GetMapping("/student/{code}/payment")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public List<Payment> findPaymentByStudentCode(@PathVariable String code){
-        return payementRepository.findByStudentCode(code);
+        return payementRepository.findByStudentCNE(code);
     }
     @PostMapping(value = "/payment",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public Payment savePayment(@RequestParam("file") MultipartFile file, NewPaymentDTO newPaymentDTO) throws IOException {
-     return paymentService.savePayment(file,newPaymentDTO);
+    public Payment savePayment(@RequestParam("file") MultipartFile file, PaymentDTO paymentDTO) throws IOException {
+     return paymentService.savePayment(file, paymentDTO);
     }
     @GetMapping(value = "/paymentFile/{paymentId}",produces = MediaType.APPLICATION_PDF_VALUE)
     @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
@@ -76,13 +76,13 @@ public class PaymentRestController {
     @GetMapping("/StudentCode/{code}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public Student findStudentByCode(@PathVariable String code){
-        return studentRepository.findByCode(code);
+        return studentRepository.findByCNE(code);
     }
-    @GetMapping("/Student/{programID}")
+   /* @GetMapping("/StudentDTO/{programID}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<Student> findStudentByProgramID( @PathVariable String programID){
+    public List<StudentDTO> findStudentByProgramID( @PathVariable String programID){
         return studentRepository.findByProgramID(programID);
-    }
+    }*/
     @GetMapping("/Payment/Status/{status}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public List<Payment> findPaymentByStatus(@PathVariable PayementStatus status){

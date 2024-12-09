@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PayementRepository extends JpaRepository<Payment,Long> {
-    List<Payment> findByStudentCode(String code);
+    List<Payment> findByStudentCNE(String code);
     List<Payment> findByStatus(PayementStatus status);
     List<Payment> findByType(PayementType type);
 

@@ -1,6 +1,10 @@
 package com.mustapha.Spring_Students.repositories;
 
+import com.mustapha.Spring_Students.entities.CModule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ModuleRepository extends JpaRepository<Module,String> {
+import java.util.Optional;
+
+public interface ModuleRepository extends JpaRepository<CModule,String> {
+
 }

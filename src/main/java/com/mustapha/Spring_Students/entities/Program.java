@@ -16,13 +16,12 @@ public class Program {
     private String id;
     private String name;
     private double price;
-    @OneToMany
+    private String poster;
+    @OneToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ResponsibleProgram responsibleProgram;
-    @OneToMany(mappedBy = "program",fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Module> moduleList;
-    @OneToMany(mappedBy = "program",fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "programDTO",fetch = FetchType.LAZY)
+    private List<CModule> CModuleList;
+    @OneToMany(mappedBy = "programDTO",fetch = FetchType.LAZY)
     private List<Student> studentList;
 }

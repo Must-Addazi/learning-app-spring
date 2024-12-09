@@ -10,14 +10,15 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 @Entity
-@Data
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class Payment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate date;
     private double amount;
+    @Enumerated(EnumType.STRING)
     private PayementType type ;
+    @Enumerated(EnumType.STRING)
     private PayementStatus status=PayementStatus.CREATED;
     private String file;
     @ManyToOne

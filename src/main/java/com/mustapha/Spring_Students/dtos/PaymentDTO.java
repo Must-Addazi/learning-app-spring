@@ -10,9 +10,9 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor @AllArgsConstructor @Builder
-public class NewPaymentDTO {
+public class PaymentDTO {
     private LocalDate date;
     private double amount;
     private PayementType type ;
-    private String studentCode;
+    private String studentCNE;
 }

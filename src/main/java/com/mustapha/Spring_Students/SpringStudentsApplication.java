@@ -26,10 +26,10 @@ public class SpringStudentsApplication {
 	PayementRepository payementRepository
 	){
 		return args -> {
-          studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).code("112233").programID("INFO").firstName("Mustapha").build());
-			studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).programID("IDIA").code("112244").firstName("Mohammed").build());
-			studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).programID("GIIA").code("112255").firstName("Said").build());
-			studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).programID("GIIA").code("112266").firstName("Amine").build());
+          studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).CNE("112233").firstName("Mustapha").build());
+			studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).CNE("112244").firstName("Mohammed").build());
+			studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).CNE("112255").firstName("Said").build());
+			studentRepository.save(Student.builder().id(UUID.randomUUID().toString()).CNE("112266").firstName("Amine").build());
 
 			PayementType [] payementTypes = PayementType.values();
 			Random random = new Random();

@@ -1,6 +1,6 @@
 package com.mustapha.Spring_Students.service;
 
-import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
+import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.enums.PayementStatus;
 import com.mustapha.Spring_Students.entities.Student;
@@ -27,7 +27,7 @@ public class PaymentService {
         this.payementRepository = payementRepository;
         this.studentRepository = studentRepository;
     }
-    public Payment savePayment(MultipartFile file, NewPaymentDTO newPaymentDTO) throws IOException {
+    public Payment savePayment(MultipartFile file, PaymentDTO paymentDTO) throws IOException {
         Path path= Paths.get(System.getProperty("user.home"),"students-app-files","payements");
         if(!Files.exists(path)){
             Files.createDirectories(path);
@@ -35,11 +35,11 @@ public class PaymentService {
         String FileID= UUID.randomUUID().toString();
         Path FilePath= Paths.get(System.getProperty("user.home"),"students-app-files","payements",FileID+".pdf");
         Files.copy(file.getInputStream(),FilePath);
-        Student student=studentRepository.findByCode(newPaymentDTO.getStudentCode());
+        Student student=studentRepository.findByCNE(paymentDTO.getStudentCNE());
         Payment payment = Payment.builder()
-                .type(newPaymentDTO.getType())
-                .amount(newPaymentDTO.getAmount())
-                .date(newPaymentDTO.getDate())
+                .type(paymentDTO.getType())
+                .amount(paymentDTO.getAmount())
+                .date(paymentDTO.getDate())
                 .student(student)
                 .status(PayementStatus.CREATED)
                 .file(FilePath.toUri().toString())
