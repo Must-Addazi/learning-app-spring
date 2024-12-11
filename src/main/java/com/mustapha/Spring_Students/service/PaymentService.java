@@ -1,59 +1,21 @@
 package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
-import com.mustapha.Spring_Students.entities.Payment;
-import com.mustapha.Spring_Students.enums.PayementStatus;
-import com.mustapha.Spring_Students.entities.Student;
-import com.mustapha.Spring_Students.repositories.PayementRepository;
-import com.mustapha.Spring_Students.repositories.StudentRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.mustapha.Spring_Students.enums.PaymentStatus;
+import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.util.List;
 
-@Service
-@Transactional
-public class PaymentService {
-    private PayementRepository payementRepository;
-    private StudentRepository studentRepository;
+public interface PaymentService {
+    PaymentDTO savePayment(MultipartFile file, PaymentDTO paymentDTO) throws IOException;
+    PaymentDTO updatePayment(Long paymentId, MultipartFile file, PaymentDTO paymentDTO) throws IOException;
+    byte[] getPaymentFile( Long paymentId) throws IOException;
+    void deletePayment(Long id) throws PaymentNotFoundException, IOException;
+    PaymentDTO updatePaymentStatus(Long paymentID, PaymentStatus status) throws PaymentNotFoundException;
+    PaymentDTO getPayment(Long id) throws PaymentNotFoundException;
+    List<PaymentDTO> getPaymentList();
+    List<PaymentDTO> getPaymentByCNE(String cne);
 
-    public PaymentService(PayementRepository payementRepository, StudentRepository studentRepository) {
-        this.payementRepository = payementRepository;
-        this.studentRepository = studentRepository;
-    }
-    public Payment savePayment(MultipartFile file, PaymentDTO paymentDTO) throws IOException {
-        Path path= Paths.get(System.getProperty("user.home"),"students-app-files","payements");
-        if(!Files.exists(path)){
-            Files.createDirectories(path);
-        }
-        String FileID= UUID.randomUUID().toString();
-        Path FilePath= Paths.get(System.getProperty("user.home"),"students-app-files","payements",FileID+".pdf");
-        Files.copy(file.getInputStream(),FilePath);
-        Student student=studentRepository.findByCNE(paymentDTO.getStudentCNE());
-        Payment payment = Payment.builder()
-                .type(paymentDTO.getType())
-                .amount(paymentDTO.getAmount())
-                .date(paymentDTO.getDate())
-                .student(student)
-                .status(PayementStatus.CREATED)
-                .file(FilePath.toUri().toString())
-                .build();
-        return payementRepository.save(payment);
-    }
-    public Payment updatePaymentStatus( Long paymentID, PayementStatus status){
-        Payment payment = payementRepository.findById(paymentID).get();
-        payment.setStatus(status);
-        return payementRepository.save(payment);
-    }
-    public byte[] getPaymentFile( Long paymentId) throws IOException {
-        Payment payment = payementRepository.findById(paymentId).get();
-        String filePath= payment.getFile();
-        return Files.readAllBytes(Path.of(URI.create(filePath)));
-    }
 }

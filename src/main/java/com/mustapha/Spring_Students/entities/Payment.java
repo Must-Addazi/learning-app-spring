@@ -1,7 +1,7 @@
 package com.mustapha.Spring_Students.entities;
 
-import com.mustapha.Spring_Students.enums.PayementStatus;
-import com.mustapha.Spring_Students.enums.PayementType;
+import com.mustapha.Spring_Students.enums.PaymentType;
+import com.mustapha.Spring_Students.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +17,9 @@ public class Payment {
     private LocalDate date;
     private double amount;
     @Enumerated(EnumType.STRING)
-    private PayementType type ;
+    private PaymentType type ;
     @Enumerated(EnumType.STRING)
-    private PayementStatus status=PayementStatus.CREATED;
+    private PaymentStatus status= com.mustapha.Spring_Students.enums.PaymentStatus.CREATED;
     private String file;
     @ManyToOne
     private Student student;

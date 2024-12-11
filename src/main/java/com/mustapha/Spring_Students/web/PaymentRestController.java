@@ -1,16 +1,14 @@
 package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
-import com.mustapha.Spring_Students.entities.Payment;
-import com.mustapha.Spring_Students.enums.PayementStatus;
-import com.mustapha.Spring_Students.enums.PayementType;
-import com.mustapha.Spring_Students.entities.Student;
-import com.mustapha.Spring_Students.repositories.PayementRepository;
-import com.mustapha.Spring_Students.repositories.StudentRepository;
+import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.enums.PaymentStatus;
+import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
+import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.service.PaymentService;
+import com.mustapha.Spring_Students.service.StudentService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,76 +19,40 @@ import java.util.List;
 @Slf4j
 @CrossOrigin("*")
 @RestController
+@AllArgsConstructor
 public class PaymentRestController {
-    private PayementRepository payementRepository;
-    private StudentRepository studentRepository;
     private PaymentService paymentService;
 
-    private static final Logger logger = LoggerFactory.getLogger(PaymentRestController.class);
-    public PaymentRestController(PayementRepository payementRepository, StudentRepository studentRepository, PaymentService paymentService) {
-        this.payementRepository = payementRepository;
-        this.studentRepository = studentRepository;
-        this.paymentService = paymentService;
-    }
-
     @GetMapping("/payments")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<Payment> AllPayments(){
-       return payementRepository.findAll();
+  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    public List<PaymentDTO> AllPayments(){
+       return paymentService.getPaymentList();
     }
     @GetMapping("/payment/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public Payment findPayementBYid(@PathVariable Long id){
-        return payementRepository.findById(id).get();
-    }
-    @GetMapping("/students")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<Student> AllStudents(){
-        return studentRepository.findAll();
-    }
-    @GetMapping("/student/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public Student findStudentById( @PathVariable String id){
-        return studentRepository.findById(id).get();
+  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    public PaymentDTO findPayementBYid(@PathVariable Long id) throws PaymentNotFoundException {
+        return paymentService.getPayment(id);
     }
     @GetMapping("/student/{code}/payment")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<Payment> findPaymentByStudentCode(@PathVariable String code){
-        return payementRepository.findByStudentCNE(code);
+   // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    public List<PaymentDTO> findPaymentByStudentCode(@PathVariable String code){
+        return paymentService.getPaymentByCNE(code);
     }
     @PostMapping(value = "/payment",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public Payment savePayment(@RequestParam("file") MultipartFile file, PaymentDTO paymentDTO) throws IOException {
+   // @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public PaymentDTO savePayment(@RequestParam("file") MultipartFile file, PaymentDTO paymentDTO) throws IOException {
      return paymentService.savePayment(file, paymentDTO);
     }
     @GetMapping(value = "/paymentFile/{paymentId}",produces = MediaType.APPLICATION_PDF_VALUE)
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+ //   @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public byte[] getPaymentFile(@PathVariable Long paymentId) throws IOException {
      return paymentService.getPaymentFile(paymentId);
     }
     @PutMapping("/payments/updateStatus/{paymentID}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public Payment updatePaymentStatus(@PathVariable Long paymentID, @RequestParam PayementStatus status){
+  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public PaymentDTO updatePaymentStatus(@PathVariable Long paymentID, @RequestParam PaymentStatus status) throws PaymentNotFoundException {
        return paymentService.updatePaymentStatus(paymentID,status);
     }
-    @GetMapping("/StudentCode/{code}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public Student findStudentByCode(@PathVariable String code){
-        return studentRepository.findByCNE(code);
-    }
-   /* @GetMapping("/StudentDTO/{programID}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<StudentDTO> findStudentByProgramID( @PathVariable String programID){
-        return studentRepository.findByProgramID(programID);
-    }*/
-    @GetMapping("/Payment/Status/{status}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<Payment> findPaymentByStatus(@PathVariable PayementStatus status){
-        return payementRepository.findByStatus(status);
-    }
-    @GetMapping("/Payment/Type/{type}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<Payment> findPaymentByType(@PathVariable PayementType type){
-        return payementRepository.findByType(type);
-    }
+
+
 }

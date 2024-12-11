@@ -1,5 +1,6 @@
 package com.mustapha.Spring_Students.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,8 +21,10 @@ public class Program {
     @OneToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ResponsibleProgram responsibleProgram;
-    @OneToMany(mappedBy = "programDTO",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "program",fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<CModule> CModuleList;
-    @OneToMany(mappedBy = "programDTO",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "program",fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Student> studentList;
 }

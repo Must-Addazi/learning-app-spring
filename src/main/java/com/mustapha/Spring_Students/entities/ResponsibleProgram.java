@@ -16,6 +16,6 @@ public class ResponsibleProgram {
     private String lastName;
     private String phoneNumber;
     private String email;
-     @OneToOne(mappedBy = "responsibleProgramDTO", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "responsibleProgram", cascade = CascadeType.ALL)
     private Program program;
 }

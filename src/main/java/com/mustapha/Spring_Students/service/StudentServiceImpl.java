@@ -32,6 +32,7 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public StudentDTO saveStudent(StudentDTO studentDTO) {
         Student student = mapper.fromStudentDTO(studentDTO);
+        student.setProgram(mapper.fromProgramDTO(studentDTO.getProgramDTO()));
         Student savedstudent= studentRepository.save(student);
         return mapper.fromStudent(savedstudent);
     }
@@ -57,9 +58,15 @@ public class StudentServiceImpl implements StudentService{
         return studentList.stream().map(student -> mapper.fromStudent(student)).toList();
     }
 
+
     @Override
-    public StudentDTO searchStudentByCNE(String CNE) {
-        Student student = studentRepository.findByCNE(CNE);
-        return mapper.fromStudent(student);
+    public StudentDTO findByCNE(String code) {
+        return mapper.fromStudent(studentRepository.findByCNE(code));
+    }
+
+    @Override
+    public List<StudentDTO> findByProgram(String program) {
+        List<Student> studentList= studentRepository.findByProgramName(program);
+        return studentList.stream().map(student -> mapper.fromStudent(student)).toList();
     }
 }

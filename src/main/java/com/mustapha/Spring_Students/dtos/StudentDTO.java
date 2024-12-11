@@ -19,5 +19,4 @@ public class StudentDTO {
     private double amountPaid;
     private String photo;
     private ProgramDTO programDTO;
-    private List<Payment> paymentList;
 }

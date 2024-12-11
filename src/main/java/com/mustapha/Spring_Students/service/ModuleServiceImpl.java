@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @AllArgsConstructor
-@NoArgsConstructor
 @Service
 @Transactional
 public class ModuleServiceImpl implements ModuleService{
@@ -33,6 +32,7 @@ public class ModuleServiceImpl implements ModuleService{
     @Override
     public ModuleDTO saveModule(ModuleDTO moduleDTO) {
         CModule cModule=mapper.fromModuleDTO(moduleDTO);
+        cModule.setProgram(mapper.fromProgramDTO(moduleDTO.getProgramDTO()));
         CModule savedModule=moduleRepository.save(cModule);
         return mapper.fromModule(savedModule);
     }

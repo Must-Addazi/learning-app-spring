@@ -1,5 +1,5 @@
 package com.mustapha.Spring_Students.enums;
 
-public enum PayementStatus {
+public enum PaymentStatus {
     CREATED,REJECTED,VALIDATED
 }

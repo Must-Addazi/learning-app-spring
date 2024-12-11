@@ -27,5 +27,6 @@ public class Student {
     @ManyToOne
     private Program program;
     @OneToMany(mappedBy = "student",fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Payment> paymentList;
 }

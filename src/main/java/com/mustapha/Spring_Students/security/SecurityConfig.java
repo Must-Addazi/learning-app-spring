@@ -55,7 +55,7 @@ public class SecurityConfig{
                .csrf(AbstractHttpConfigurer::disable)
                .cors(Customizer.withDefaults())
                .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
-               .authorizeHttpRequests(rq->rq.anyRequest().authenticated())
+               .authorizeHttpRequests(rq->rq.anyRequest().permitAll())
                .build();
     }
     @Bean
