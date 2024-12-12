@@ -1,5 +1,7 @@
 package com.mustapha.Spring_Students.service;
 
+import com.mustapha.Spring_Students.dtos.PaymentDTO;
+import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -20,7 +23,15 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public List<StudentDTO> getStudentList() {
         List<Student> studentList=studentRepository.findAll();
-        return studentList.stream().map(student ->mapper.fromStudent(student)).toList();
+        return studentList.stream().map(student -> {
+            StudentDTO studentDTO = mapper.fromStudent(student);
+            if (student.getProgram() != null) {
+                ProgramDTO programDTO = mapper.fromProgram(student.getProgram());
+                studentDTO.setProgramDTO(programDTO);
+            }
+            return studentDTO;
+        }).collect(Collectors.toList());
+
     }
 
     @Override

@@ -50,7 +50,7 @@ public class SpringStudentsApplication {
 			PaymentType [] paymentTypes = PaymentType.values();
 			Random random = new Random();
          studentService.getStudentList().forEach(student -> {
-			 for (int i = 0; i < 10; i++) {
+			 for (int i = 0; i < 5; i++) {
 				 int index = random.nextInt(paymentTypes.length);
 				 PaymentDTO payment = PaymentDTO.builder().
 						 amount((int)(10000+Math.random()*20000)).

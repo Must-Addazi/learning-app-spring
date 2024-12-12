@@ -37,7 +37,7 @@ public class StudentRestController {
         return studentService.findByCNE(code);
     }
     @GetMapping("/StudentDTO/{programID}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public List<StudentDTO> findStudentByProgram(@PathVariable String program){
         return studentService.findByProgram(program);
     }
