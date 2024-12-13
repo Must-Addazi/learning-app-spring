@@ -15,6 +15,4 @@ public class ProgramDTO {
     private double price;
     private String poster;
     private ResponsibleProgramDTO responsibleProgramDTO;
-    private List<ModuleDTO> moduleDTOList;
-    private List<StudentDTO> studentDTOList;
 }

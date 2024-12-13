@@ -1,10 +1,13 @@
 package com.mustapha.Spring_Students.web;
 
+import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.enums.PaymentStatus;
+import com.mustapha.Spring_Students.enums.PaymentType;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
+import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.service.PaymentService;
 import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 @Slf4j
 @CrossOrigin("*")
@@ -22,6 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentRestController {
     private PaymentService paymentService;
+    private StudentService studentService;
 
     @GetMapping("/payments")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
@@ -40,12 +45,14 @@ public class PaymentRestController {
     }
     @PostMapping(value = "/payment",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    // @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public PaymentDTO savePayment(@RequestParam("file") MultipartFile file, PaymentDTO paymentDTO) throws IOException {
-     return paymentService.savePayment(file, paymentDTO);
+    public PaymentDTO savePayment(@RequestParam("file") MultipartFile file, NewPaymentDTO newPaymentDTO
+                                   ) throws IOException {
+        return paymentService.savePayment(file,newPaymentDTO);
     }
+
     @GetMapping(value = "/paymentFile/{paymentId}",produces = MediaType.APPLICATION_PDF_VALUE)
  //   @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public byte[] getPaymentFile(@PathVariable Long paymentId) throws IOException {
+    public byte[] getPaymentFile(@PathVariable Long paymentId) throws IOException,PaymentNotFoundException {
      return paymentService.getPaymentFile(paymentId);
     }
     @PutMapping("/payments/updateStatus/{paymentID}")

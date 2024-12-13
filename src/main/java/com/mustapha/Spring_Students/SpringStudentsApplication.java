@@ -52,13 +52,11 @@ public class SpringStudentsApplication {
          studentService.getStudentList().forEach(student -> {
 			 for (int i = 0; i < 5; i++) {
 				 int index = random.nextInt(paymentTypes.length);
-				 PaymentDTO payment = PaymentDTO.builder().
-						 amount((int)(10000+Math.random()*20000)).
+				 NewPaymentDTO payment = NewPaymentDTO.builder().
+						 amount((10000+Math.random()*20000)).
 						 date(LocalDate.now())
 						 .type(paymentTypes[index])
-						 .file(UUID.randomUUID().toString())
-						 .studentDTO(student)
-						 .status(PaymentStatus.CREATED)
+						 .studentCNE(student.getCNE())
 						 .build();
                  try {
                      paymentService.savePayment(null,payment);

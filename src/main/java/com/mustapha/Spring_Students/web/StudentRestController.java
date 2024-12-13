@@ -1,6 +1,7 @@
 package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.service.PaymentService;
 import com.mustapha.Spring_Students.service.StudentService;
@@ -38,7 +39,7 @@ public class StudentRestController {
     }
     @GetMapping("/StudentDTO/{programID}")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<StudentDTO> findStudentByProgram(@PathVariable String program){
+    public List<StudentDTO> findStudentByProgram(@PathVariable(name ="programID" ) String program) throws ProgramNotFoundException {
         return studentService.findByProgram(program);
     }
 }

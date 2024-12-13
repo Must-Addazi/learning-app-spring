@@ -1,5 +1,6 @@
 package com.mustapha.Spring_Students.service;
 
+import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.entities.Payment;
@@ -10,6 +11,7 @@ import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.PaymentRepository;
 import com.mustapha.Spring_Students.repositories.StudentRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,35 +23,39 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+
 
 @Service
 @Transactional
 @AllArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
     private StudentRepository studentRepository;
     private PaymentRepository paymentRepository;
     private Mapper mapper;
 
-    public PaymentDTO savePayment(MultipartFile file, PaymentDTO paymentDTO) throws IOException {
+    public PaymentDTO savePayment(MultipartFile file, NewPaymentDTO newPaymentDTO) throws IOException {
         Path path= Paths.get(System.getProperty("user.home"),"students-app-files","payments");
         if(!Files.exists(path)){
             Files.createDirectories(path);
         }
-        Student student=studentRepository.findByCNE(paymentDTO.getStudentDTO().getCNE());
+        Student student=studentRepository.findByCNE(newPaymentDTO.getStudentCNE());
+        PaymentDTO paymentDTO=mapper.fromNewpaymentDTO(newPaymentDTO);
+        paymentDTO.setStudentDTO(mapper.fromStudent(student));
+        paymentDTO.setStatus(PaymentStatus.CREATED);
         String FileID;
         if(student != null) {
-             FileID = student.getFirstName() + student.getLastName() + student.getCNE();
+             FileID = student.getFirstName() + student.getLastName() + UUID.randomUUID();
         }else {
             FileID= UUID.randomUUID().toString();
         }
-        Path FilePath= Paths.get(System.getProperty("user.home"),"students-app-files","payments",FileID+".pdf");
+        Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","payments",FileID+".pdf");
         if(file !=null)
-        Files.copy(file.getInputStream(),FilePath);
+        Files.copy(file.getInputStream(),filePath);
+        paymentDTO.setFile(filePath.toUri().toString());
         Payment payment = mapper.fromPaymentDTO(paymentDTO);
-        payment.setStudent(student);
         Payment savedPayment= paymentRepository.save(payment);
-        assert student != null;
         student.setAmountPaid(student.getAmountPaid()+ payment.getAmount());
         studentRepository.save(student);
         return mapper.fromPayment(savedPayment);
@@ -95,8 +101,8 @@ public class PaymentServiceImpl implements PaymentService {
         return mapper.fromPayment(updatedPayment);
     }
 
-    public byte[] getPaymentFile( Long paymentId) throws IOException {
-        Payment payment = paymentRepository.findById(paymentId).get();
+    public byte[] getPaymentFile( Long paymentId) throws IOException, PaymentNotFoundException {
+        Payment payment = mapper.fromPaymentDTO(getPayment(paymentId));
         String filePath= payment.getFile();
         return Files.readAllBytes(Path.of(URI.create(filePath)));
     }
@@ -133,14 +139,7 @@ public class PaymentServiceImpl implements PaymentService {
     public List<PaymentDTO> getPaymentList() {
         List<Payment> paymentList = paymentRepository.findAll();
 
-        return paymentList.stream().map(payment -> {
-            PaymentDTO paymentDTO = mapper.fromPayment(payment);
-            if (payment.getStudent() != null) {
-                StudentDTO studentDTO = mapper.fromStudent(payment.getStudent());
-                paymentDTO.setStudentDTO(studentDTO);
-            }
-            return paymentDTO;
-        }).collect(Collectors.toList());
+        return paymentList.stream().map(payment -> mapper.fromPayment(payment)).toList();
     }
 
 

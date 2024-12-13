@@ -2,6 +2,7 @@ package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.entities.Student;
+import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 
 import java.util.List;
@@ -16,5 +17,5 @@ public interface StudentService {
 
     StudentDTO findByCNE(String code);
 
-    List<StudentDTO> findByProgram(String program);
+    List<StudentDTO> findByProgram(String program) throws ProgramNotFoundException;
 }
