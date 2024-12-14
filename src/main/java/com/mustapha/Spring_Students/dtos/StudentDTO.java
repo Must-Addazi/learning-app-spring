@@ -17,6 +17,6 @@ public class StudentDTO {
     private String lastName;
     private String email;
     private double amountPaid;
-    private String photo;
+    private String photoCIN;
     private ProgramDTO programDTO;
 }

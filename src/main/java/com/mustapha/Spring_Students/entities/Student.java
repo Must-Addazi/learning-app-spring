@@ -23,7 +23,7 @@ public class Student {
     @Column(unique = true)
     private String email;
     private double amountPaid;
-    private String photo;
+    private String photoCIN;
     @ManyToOne
     private Program program;
     @OneToMany(mappedBy = "student",fetch = FetchType.LAZY)

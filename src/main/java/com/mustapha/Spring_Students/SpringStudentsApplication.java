@@ -1,9 +1,7 @@
 package com.mustapha.Spring_Students;
 
 import com.mustapha.Spring_Students.dtos.*;
-import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.enums.PaymentType;
-import com.mustapha.Spring_Students.enums.PaymentStatus;
 import com.mustapha.Spring_Students.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
