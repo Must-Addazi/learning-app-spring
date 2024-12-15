@@ -2,6 +2,7 @@ package com.mustapha.Spring_Students;
 
 import com.mustapha.Spring_Students.dtos.*;
 import com.mustapha.Spring_Students.enums.PaymentType;
+import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +22,7 @@ public class SpringStudentsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringStudentsApplication.class, args);
 	}
-	@Bean
+	//@Bean
 	CommandLineRunner commandLineRunner(StudentService studentService,
     ModuleService moduleService,
 	PaymentService paymentService,
@@ -34,13 +35,39 @@ public class SpringStudentsApplication {
 			respoProgramService.getResposProgram().forEach(respo->{
 				ProgramDTO programDTO=ProgramDTO.builder().responsibleProgramDTO(respo).price(Math.random()*1000).id(UUID.randomUUID().toString()).name(respo.getFirstName()+"filiere").build();
 				programDTO.setResponsibleProgramDTO(respo);
+				respo.setProgramDTO(programDTO);
+				respoProgramService.updateRespo(respo.getId(),respo);
 				programService.saveProgram(programDTO);
 			});
 			programService.getPrograms().forEach(programDTO ->{
-				studentService.saveStudent(StudentDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).amountPaid(123).CNE(UUID.randomUUID().toString()).firstName("Mustapha").build());
-				studentService.saveStudent(StudentDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).programDTO(programDTO).amountPaid(123).CNE(UUID.randomUUID().toString()).firstName("Mohammed").build());
-				studentService.saveStudent(StudentDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).amountPaid(123).CNE(UUID.randomUUID().toString()).firstName("Said").build());
-				studentService.saveStudent(StudentDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).amountPaid(123).CNE(UUID.randomUUID().toString()).firstName("Amine").build());
+                try {
+                    studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha").build());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (ProgramNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+				try {
+					studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha1").build());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} catch (ProgramNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+				try {
+					studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha2").build());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} catch (ProgramNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+				try {
+					studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha3").build());
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} catch (ProgramNotFoundException e) {
+					throw new RuntimeException(e);
+				}
 				moduleService.saveModule(ModuleDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).name("dev").teacherName("xxx").build());
 				moduleService.saveModule(ModuleDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).name("IA").teacherName("yyy").build());
 			} );
@@ -54,7 +81,7 @@ public class SpringStudentsApplication {
 						 amount((10000+Math.random()*20000)).
 						 date(LocalDate.now())
 						 .type(paymentTypes[index])
-						 .studentCNE(student.getCNE())
+						 .studentCNE(student.getCIN())
 						 .build();
                  try {
                      paymentService.savePayment(null,payment);

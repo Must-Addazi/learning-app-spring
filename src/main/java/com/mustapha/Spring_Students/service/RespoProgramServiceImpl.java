@@ -33,4 +33,11 @@ public class RespoProgramServiceImpl implements RespoProgramService{
         List<ResponsibleProgram> responsibleProgramList=responsibleProgramRepository.findAll();
         return responsibleProgramList.stream().map(responsibleProgram -> mapper.fromResponsibleProgram(responsibleProgram)).toList();
     }
+
+    @Override
+    public ResponsibleProgramDTO updateRespo(String id, ResponsibleProgramDTO responsibleProgramDTO) {
+        ResponsibleProgram responsibleProgram=mapper.fromResponsibleProgramDTO(responsibleProgramDTO);
+        responsibleProgram.setId(responsibleProgram.getId());
+        return mapper.fromResponsibleProgram(responsibleProgramRepository.save(responsibleProgram));
+    }
 }

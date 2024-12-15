@@ -40,7 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
         if(!Files.exists(path)){
             Files.createDirectories(path);
         }
-        Student student=studentRepository.findByCNE(newPaymentDTO.getStudentCNE());
+        Student student=studentRepository.findByCIN(newPaymentDTO.getStudentCNE());
         PaymentDTO paymentDTO=mapper.fromNewpaymentDTO(newPaymentDTO);
         paymentDTO.setStudentDTO(mapper.fromStudent(student));
         paymentDTO.setStatus(PaymentStatus.CREATED);
@@ -70,10 +70,10 @@ public class PaymentServiceImpl implements PaymentService {
         if (paymentDTO.getDate() != null) {
             payment.setDate(paymentDTO.getDate());
         }
-        Student student = studentRepository.findByCNE(paymentDTO.getStudentDTO().getCNE());
-        if (paymentDTO.getStudentDTO().getCNE() != null) {
+        Student student = studentRepository.findByCIN(paymentDTO.getStudentDTO().getCIN());
+        if (paymentDTO.getStudentDTO().getCIN() != null) {
             if (student == null) {
-                throw new IllegalArgumentException("Student with CNE " + paymentDTO.getStudentDTO().getCNE() + " not found");
+                throw new IllegalArgumentException("Student with CNE " + paymentDTO.getStudentDTO().getCIN() + " not found");
             }
             payment.setStudent(student);
         }
@@ -89,7 +89,7 @@ public class PaymentServiceImpl implements PaymentService {
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
-            String newFileID = student.getFirstName()+student.getLastName()+student.getCNE();;
+            String newFileID = student.getFirstName()+student.getLastName()+student.getCIN();;
             Path newFilePath = Paths.get(System.getProperty("user.home"), "students-app-files", "payments", newFileID + ".pdf");
             Files.copy(file.getInputStream(), newFilePath);
 
@@ -145,7 +145,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentDTO> getPaymentByCNE(String cne) {
-        Student student=studentRepository.findByCNE(cne);
+        Student student=studentRepository.findByCIN(cne);
         List<Payment> paymentList=paymentRepository.findByStudent(student);
         return paymentList.stream().map(payment -> mapper.fromPayment(payment)).toList();
     }

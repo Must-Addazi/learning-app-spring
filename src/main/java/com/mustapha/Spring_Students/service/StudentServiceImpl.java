@@ -1,10 +1,13 @@
 package com.mustapha.Spring_Students.service;
 
+import com.mustapha.Spring_Students.dtos.NewStudentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.entities.Program;
 import com.mustapha.Spring_Students.entities.Student;
+import com.mustapha.Spring_Students.enums.PaymentStatus;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
@@ -12,8 +15,14 @@ import com.mustapha.Spring_Students.repositories.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -37,10 +46,25 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public StudentDTO saveStudent(StudentDTO studentDTO) {
+    public StudentDTO saveStudent(MultipartFile file, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
+        Path path= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles");
+        if(!Files.exists(path)){
+            Files.createDirectories(path);
+        }
+        Program program=mapper.fromProgramDTO(programService.getProgram(newStudentDTO.getProgramID()));
+        StudentDTO studentDTO = mapper.fromNewStudentDTO(newStudentDTO);
+        studentDTO.setProgramDTO(mapper.fromProgram(program));
+        studentDTO.setId(UUID.randomUUID().toString());
+        studentDTO.setAmountPaid(0);
+        String FileID;
+        FileID = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN();
+        Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles",FileID+".pdf");
+        if(file !=null)
+            Files.copy(file.getInputStream(),filePath);
+        studentDTO.setPhotoCIN(filePath.toUri().toString());
         Student student = mapper.fromStudentDTO(studentDTO);
-        Student savedstudent= studentRepository.save(student);
-        return mapper.fromStudent(savedstudent);
+        Student savedStudent = studentRepository.save(student);
+        return mapper.fromStudent(savedStudent);
     }
 
     @Override
@@ -66,8 +90,8 @@ public class StudentServiceImpl implements StudentService{
 
 
     @Override
-    public StudentDTO findByCNE(String code) {
-        return mapper.fromStudent(studentRepository.findByCNE(code));
+    public StudentDTO findByCIN(String code) {
+        return mapper.fromStudent(studentRepository.findByCIN(code));
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.mustapha.Spring_Students.service.PaymentService;
 import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,16 +50,35 @@ public class PaymentRestController {
         return paymentService.savePayment(file,newPaymentDTO);
     }
 
-    @GetMapping(value = "/paymentFile/{paymentId}",produces = MediaType.APPLICATION_PDF_VALUE)
+   // @GetMapping(value = "/paymentFile/{paymentId}",produces = MediaType.APPLICATION_PDF_VALUE)
  //   @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public byte[] getPaymentFile(@PathVariable Long paymentId) throws IOException,PaymentNotFoundException {
+  /*  public byte[] getPaymentFile(@PathVariable Long paymentId) throws IOException,PaymentNotFoundException {
      return paymentService.getPaymentFile(paymentId);
-    }
+    }*/
     @PutMapping("/payments/updateStatus/{paymentID}")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public PaymentDTO updatePaymentStatus(@PathVariable Long paymentID, @RequestParam PaymentStatus status) throws PaymentNotFoundException {
        return paymentService.updatePaymentStatus(paymentID,status);
     }
+    @GetMapping("/paymentFile/{paymentId}")
+    public ResponseEntity<byte[]> getPaymentFile(@PathVariable Long paymentId) {
+        try {
+            byte[] fileBytes = paymentService.getPaymentFile(paymentId);
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.builder("inline")
+                    .filename("payment_" + paymentId + ".pdf").build());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileBytes);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (PaymentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
 }

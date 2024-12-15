@@ -17,13 +17,15 @@ public class Student {
     @Id
     private String id ;
     @Column(unique = true)
-    private String CNE;
+    private String CIN;
     private String firstName;
     private String lastName;
     @Column(unique = true)
     private String email;
+    private String phone;
     private double amountPaid;
     private String photoCIN;
+    private String photo;
     @ManyToOne
     private Program program;
     @OneToMany(mappedBy = "student",fetch = FetchType.LAZY)

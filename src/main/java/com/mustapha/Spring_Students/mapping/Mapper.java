@@ -39,23 +39,39 @@ public class Mapper {
     public ProgramDTO fromProgram(Program program){
         ProgramDTO programDTO= new ProgramDTO();
         BeanUtils.copyProperties(program,programDTO);
-        programDTO.setResponsibleProgramDTO(fromResponsibleProgram(program.getResponsibleProgram()));
+        if(program.getResponsibleProgram() != null) {
+            programDTO.setResponsibleProgramDTO(fromResponsibleProgram(program.getResponsibleProgram()));
+        }
         return programDTO;
     }
     public Program fromProgramDTO(ProgramDTO programDTO){
         Program program= new Program();
         BeanUtils.copyProperties(programDTO,program);
-        program.setResponsibleProgram(fromResponsibleProgramDTO(programDTO.getResponsibleProgramDTO()));
+        if(programDTO.getResponsibleProgramDTO() != null) {
+            program.setResponsibleProgram(fromResponsibleProgramDTO(programDTO.getResponsibleProgramDTO()));
+        }
         return program;
     }
     public ResponsibleProgramDTO fromResponsibleProgram(ResponsibleProgram responsibleProgram){
         ResponsibleProgramDTO responsibleProgramDTO= new ResponsibleProgramDTO();
         BeanUtils.copyProperties(responsibleProgram,responsibleProgramDTO);
+        if (responsibleProgram.getProgram() != null) {
+            responsibleProgramDTO.setProgramDTO(new ProgramDTO());
+            responsibleProgramDTO.getProgramDTO().setId(responsibleProgram.getProgram().getId());
+            responsibleProgramDTO.getProgramDTO().setName(responsibleProgram.getProgram().getName());
+            responsibleProgramDTO.getProgramDTO().setPrice(responsibleProgram.getProgram().getPrice());
+        }
         return responsibleProgramDTO;
     }
     public ResponsibleProgram fromResponsibleProgramDTO(ResponsibleProgramDTO responsibleProgramDTO){
         ResponsibleProgram responsibleProgram= new ResponsibleProgram();
         BeanUtils.copyProperties(responsibleProgramDTO,responsibleProgram);
+        if (responsibleProgramDTO.getProgramDTO() != null) {
+            responsibleProgram.setProgram(new Program());
+            responsibleProgram.getProgram().setId(responsibleProgramDTO.getProgramDTO().getId());
+            responsibleProgram.getProgram().setName(responsibleProgramDTO.getProgramDTO().getName());
+            responsibleProgram.getProgram().setPrice(responsibleProgramDTO.getProgramDTO().getPrice());
+        }
         return responsibleProgram;
     }
     public StudentDTO fromStudent(Student student){
@@ -69,5 +85,10 @@ public class Mapper {
         BeanUtils.copyProperties(studentDTO,student);
         student.setProgram(fromProgramDTO(studentDTO.getProgramDTO()));
         return student;
+    }
+    public StudentDTO fromNewStudentDTO(NewStudentDTO newStudentDTO){
+        StudentDTO studentDTO= new StudentDTO();
+        BeanUtils.copyProperties(newStudentDTO,studentDTO);
+        return studentDTO;
     }
 }
