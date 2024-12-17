@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
+
 @AllArgsConstructor
 @Service
 @Transactional
@@ -24,6 +26,7 @@ public class RespoProgramServiceImpl implements RespoProgramService{
 
     @Override
     public ResponsibleProgramDTO saveRespoProgram(ResponsibleProgramDTO responsibleProgramDTO) {
+        responsibleProgramDTO.setId(UUID.randomUUID().toString());
         ResponsibleProgram responsibleProgram=mapper.fromResponsibleProgramDTO(responsibleProgramDTO);
         return mapper.fromResponsibleProgram(responsibleProgramRepository.save(responsibleProgram)) ;
     }

@@ -1,8 +1,10 @@
 package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.ModuleDTO;
+import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.entities.CModule;
 import com.mustapha.Spring_Students.exceptions.ModuleNotFoundException;
+import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.ModuleRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.List;
 @Transactional
 public class ModuleServiceImpl implements ModuleService{
     public ModuleRepository moduleRepository;
+    public ProgramService programService;
     public Mapper mapper;
     @Override
     public List<ModuleDTO> getModuleList() {
@@ -50,4 +53,10 @@ public class ModuleServiceImpl implements ModuleService{
         moduleRepository.deleteById(id);
 
     }
+
+    @Override
+    public List<ModuleDTO> getModuleByProgram(String programId) throws ProgramNotFoundException {
+        ProgramDTO programDTO= programService.getProgram(programId);
+        List<CModule> moduleList= moduleRepository.findByProgram(mapper.fromProgramDTO(programDTO));
+        return  moduleList.stream().map(CModule -> mapper.fromModule(CModule)).toList();    }
 }

@@ -30,15 +30,19 @@ public class SpringStudentsApplication {
 	ProgramService programService
 										){
 		return args -> {
-			respoProgramService.saveRespoProgram(ResponsibleProgramDTO.builder().email("prof1@gmail.com").id(UUID.randomUUID().toString()).phoneNumber("066666").firstName("Must1").build());
-			respoProgramService.saveRespoProgram(ResponsibleProgramDTO.builder().email("prof2@gmail.com").id(UUID.randomUUID().toString()).phoneNumber("066666").firstName("Must2").build());
+			respoProgramService.saveRespoProgram(ResponsibleProgramDTO.builder().email("prof1@gmail.com").id(UUID.randomUUID().toString()).phoneNumber("066666").name("Must1").build());
+			respoProgramService.saveRespoProgram(ResponsibleProgramDTO.builder().email("prof2@gmail.com").id(UUID.randomUUID().toString()).phoneNumber("066666").name("Must2").build());
 			respoProgramService.getResposProgram().forEach(respo->{
-				ProgramDTO programDTO=ProgramDTO.builder().responsibleProgramDTO(respo).price(Math.random()*1000).id(UUID.randomUUID().toString()).name(respo.getFirstName()+"filiere").build();
+				ProgramDTO programDTO=ProgramDTO.builder().responsibleProgramDTO(respo).price(Math.random()*1000).id(UUID.randomUUID().toString()).name(respo.getName()+"filiere").build();
 				programDTO.setResponsibleProgramDTO(respo);
-				respo.setProgramDTO(programDTO);
+			//	respo.setProgramDTO(programDTO);
 				respoProgramService.updateRespo(respo.getId(),respo);
-				programService.saveProgram(programDTO);
-			});
+                try {
+                    programService.saveProgram(null,programDTO);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 			programService.getPrograms().forEach(programDTO ->{
                 try {
                     studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha").build());

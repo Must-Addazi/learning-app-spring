@@ -1,6 +1,5 @@
 package com.mustapha.Spring_Students.dtos;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,9 +7,8 @@ import lombok.NoArgsConstructor;
 
 
 @Data @AllArgsConstructor @NoArgsConstructor @Builder
-public class ResponsibleProgramDTO {
-    private String id;
+public class NewProgram {
     private String name;
-    private String phoneNumber;
-    private String email;
+    private double price;
+    private String respId;
 }

@@ -6,15 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Data @AllArgsConstructor @NoArgsConstructor @Builder
-public class ResponsibleProgram {
+public class ProgramPoster {
     @Id
-    private String id;
-    private String name;
-    private String phoneNumber;
-    private String email;
-    @OneToOne(mappedBy = "responsibleProgram", cascade = CascadeType.ALL)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String url;
+    @ManyToOne
     private Program program;
 }

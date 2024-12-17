@@ -17,7 +17,10 @@ public class Program {
     private String id;
     private String name;
     private double price;
-    private String poster;
+    private String timing;
+    @OneToMany(mappedBy = "program")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<ProgramPoster> posterList;
     @OneToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private ResponsibleProgram responsibleProgram;
