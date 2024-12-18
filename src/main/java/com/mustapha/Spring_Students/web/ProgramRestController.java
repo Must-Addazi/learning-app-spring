@@ -1,7 +1,6 @@
 package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.*;
-import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ResponsibleProgramNotFoundException;
 import com.mustapha.Spring_Students.service.ProgramService;
@@ -31,7 +30,7 @@ public class ProgramRestController {
         return programService.getProgram(id);
     }
     @PostMapping(value = "/saveProgram", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ProgramDTO saveStudentDTO(@RequestParam("timing") MultipartFile file, NewProgram newProgram) throws IOException, ProgramNotFoundException, ResponsibleProgramNotFoundException {
+    public ProgramDTO saveStudentDTO(@RequestParam("timing") MultipartFile file, NewProgram newProgram) throws IOException, ResponsibleProgramNotFoundException {
         ResponsibleProgramDTO responsibleProgramDTO = respoProgramService.getRespoProgram(newProgram.getRespId());
         ProgramDTO programDTO= ProgramDTO.builder().price(newProgram.getPrice())
                 .name(newProgram.getName())
@@ -39,7 +38,7 @@ public class ProgramRestController {
         return programService.saveProgram(file,programDTO);
     }
     @GetMapping("/timingFile/{programId}")
-    public ResponseEntity<byte[]> getPaymentFile(@PathVariable String programId) {
+    public ResponseEntity<byte[]> getTimingFile(@PathVariable String programId) {
         try {
             byte[] fileBytes = programService.getTimingFile(programId);
             ProgramDTO programDTO= programService.getProgram(programId);

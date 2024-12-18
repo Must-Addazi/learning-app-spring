@@ -1,13 +1,9 @@
 package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
-import com.mustapha.Spring_Students.dtos.PaymentDTO;
-import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
-import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.entities.Program;
 import com.mustapha.Spring_Students.entities.Student;
-import com.mustapha.Spring_Students.enums.PaymentStatus;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
@@ -21,9 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -34,9 +31,28 @@ public class StudentServiceImpl implements StudentService{
     private Mapper mapper;
     @Override
     public List<StudentDTO> getStudentList() {
-        List<Student> studentList=studentRepository.findAll();
-        return studentList.stream().map(student ->
-                mapper.fromStudent(student)).toList();
+        List<Student> studentList = studentRepository.findAll();
+        return studentList.stream().map(student -> {
+            StudentDTO studentDTO = mapper.fromStudent(student);
+            studentDTO.setPhoto(encodeImageToBase64(student.getPhoto()));
+            return studentDTO;
+        }).toList();
+    }
+    private String encodeImageToBase64(String imagePath) {
+        try {
+            if (imagePath != null && !imagePath.isEmpty()) {
+                if (imagePath.startsWith("file:///")) {
+                    imagePath = imagePath.substring(8);
+                }
+                byte[] imageBytes = Files.readAllBytes(Path.of(imagePath));
+                return Base64.getEncoder().encodeToString(imageBytes);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la lecture de l'image: " + e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -46,10 +62,14 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public StudentDTO saveStudent(MultipartFile file, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
+    public StudentDTO saveStudent(MultipartFile file,MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
         Path path= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles");
         if(!Files.exists(path)){
             Files.createDirectories(path);
+        }
+        Path pathProfile= Paths.get(System.getProperty("user.home"),"students-app-files","profileFiles");
+        if(!Files.exists(pathProfile)){
+            Files.createDirectories(pathProfile);
         }
         Program program=mapper.fromProgramDTO(programService.getProgram(newStudentDTO.getProgramID()));
         StudentDTO studentDTO = mapper.fromNewStudentDTO(newStudentDTO);
@@ -57,14 +77,28 @@ public class StudentServiceImpl implements StudentService{
         studentDTO.setId(UUID.randomUUID().toString());
         studentDTO.setAmountPaid(0);
         String FileID;
+        String photoID;
         FileID = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN();
+        photoID= studentDTO.getFirstName() + studentDTO.getLastName()+studentDTO.getCIN();
         Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles",FileID+".pdf");
-        if(file !=null)
+        if(file !=null && Objects.requireNonNull(file.getOriginalFilename()).endsWith(".pdf"))
             Files.copy(file.getInputStream(),filePath);
+        if (profile != null && (Objects.requireNonNull(profile.getOriginalFilename()).endsWith(".jpg") || profile.getOriginalFilename().endsWith(".png"))) {
+            Path imagePath = Paths.get(System.getProperty("user.home"), "students-app-files", "profileFiles", photoID + getFileExtension(profile));
+            Files.copy(profile.getInputStream(), imagePath);
+            studentDTO.setPhoto(imagePath.toUri().toString());
+        }
         studentDTO.setPhotoCIN(filePath.toUri().toString());
         Student student = mapper.fromStudentDTO(studentDTO);
         Student savedStudent = studentRepository.save(student);
         return mapper.fromStudent(savedStudent);
+    }
+    private String getFileExtension(MultipartFile file) {
+        String filename = file.getOriginalFilename();
+        if (filename != null && filename.contains(".")) {
+            return filename.substring(filename.lastIndexOf("."));
+        }
+        return "";
     }
 
     @Override
@@ -98,6 +132,10 @@ public class StudentServiceImpl implements StudentService{
     public List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException {
         Program program = mapper.fromProgramDTO(programService.getProgram(programId));
         List<Student> studentList= studentRepository.findByProgram(program);
-        return studentList.stream().map(student -> mapper.fromStudent(student)).toList();
+        return studentList.stream().map(student -> {
+            StudentDTO studentDTO = mapper.fromStudent(student);
+            studentDTO.setPhoto(encodeImageToBase64(student.getPhoto()));
+            return studentDTO;
+        }).toList();
     }
 }

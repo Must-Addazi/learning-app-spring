@@ -13,7 +13,7 @@ import java.util.List;
 public interface StudentService {
     List<StudentDTO> getStudentList();
     StudentDTO getStudent(String id) throws StudentNotFoundException;
-    StudentDTO saveStudent(MultipartFile file , NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException;
+    StudentDTO saveStudent(MultipartFile file,MultipartFile profile , NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException;
     void deleteStudent(String id) throws StudentNotFoundException;
     StudentDTO updateStudent(String id,StudentDTO studentDTO);
     List<StudentDTO> searchStudentByName(String name);

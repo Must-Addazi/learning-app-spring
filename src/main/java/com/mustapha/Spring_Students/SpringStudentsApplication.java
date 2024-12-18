@@ -7,7 +7,6 @@ import com.mustapha.Spring_Students.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -45,34 +44,26 @@ public class SpringStudentsApplication {
             });
 			programService.getPrograms().forEach(programDTO ->{
                 try {
-                    studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha").build());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (ProgramNotFoundException e) {
+                    studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha").build());
+                } catch (IOException | ProgramNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-				try {
-					studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha1").build());
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				} catch (ProgramNotFoundException e) {
+                try {
+					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha1").build());
+				} catch (IOException | ProgramNotFoundException e) {
 					throw new RuntimeException(e);
 				}
-				try {
-					studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha2").build());
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				} catch (ProgramNotFoundException e) {
+                try {
+					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha2").build());
+				} catch (IOException | ProgramNotFoundException e) {
 					throw new RuntimeException(e);
 				}
-				try {
-					studentService.saveStudent(null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha3").build());
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				} catch (ProgramNotFoundException e) {
+                try {
+					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha3").build());
+				} catch (IOException | ProgramNotFoundException e) {
 					throw new RuntimeException(e);
 				}
-				moduleService.saveModule(ModuleDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).name("dev").teacherName("xxx").build());
+                moduleService.saveModule(ModuleDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).name("dev").teacherName("xxx").build());
 				moduleService.saveModule(ModuleDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).name("IA").teacherName("yyy").build());
 			} );
 
