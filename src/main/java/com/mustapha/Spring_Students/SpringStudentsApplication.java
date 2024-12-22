@@ -3,10 +3,16 @@ package com.mustapha.Spring_Students;
 import com.mustapha.Spring_Students.dtos.*;
 import com.mustapha.Spring_Students.enums.PaymentType;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
+import com.mustapha.Spring_Students.security.service.AccountService;
 import com.mustapha.Spring_Students.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -22,6 +28,22 @@ public class SpringStudentsApplication {
 		SpringApplication.run(SpringStudentsApplication.class, args);
 	}
 	//@Bean
+	CommandLineRunner commandLineRunner(AccountService accountService){
+return args -> {
+ accountService.addNewRole("USER");
+ accountService.addNewRole("ADMIN");
+ accountService.addNewUser("user1","12345","12345");
+ accountService.addNewUser("user2","12345","12345");
+ accountService.addNewUser("admin","12345","12345");
+ accountService.addRoleToUser("user1","USER");
+	accountService.addRoleToUser("user2","USER");
+	accountService.addRoleToUser("admin","USER");
+	accountService.addRoleToUser("admin","ADMIN");
+
+};
+
+	}
+//	@Bean
 	CommandLineRunner commandLineRunner(StudentService studentService,
     ModuleService moduleService,
 	PaymentService paymentService,

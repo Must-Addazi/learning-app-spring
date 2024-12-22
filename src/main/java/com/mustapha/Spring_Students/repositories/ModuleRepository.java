@@ -8,6 +8,5 @@ import java.util.List;
 
 
 public interface ModuleRepository extends JpaRepository<CModule,String> {
-
     List<CModule> findByProgram(Program program);
 }
