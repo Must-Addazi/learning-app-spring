@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -44,6 +45,9 @@ public class AccountServiceImpl implements AccountService{
     public void addRoleToUser(String username, String role) {
         AppUser appUser= appUserRepository.findByUsername(username);
         AppRole appRole = appRoleRepository.findById(role).orElse(null);
+        if (appUser.getRoles() == null) {
+            appUser.setRoles(new ArrayList<>());
+        }
         appUser.getRoles().add(appRole);
         //appUserRepository.save(appUser);
     }

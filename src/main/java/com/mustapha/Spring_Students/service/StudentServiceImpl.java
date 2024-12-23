@@ -8,6 +8,8 @@ import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.StudentRepository;
+import com.mustapha.Spring_Students.security.entities.AppUser;
+import com.mustapha.Spring_Students.security.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,8 @@ import java.util.UUID;
 public class StudentServiceImpl implements StudentService{
     private StudentRepository studentRepository;
     private ProgramService programService;
+    private AccountService accountService;
+    private EmailService emailService;
     private Mapper mapper;
     @Override
     public List<StudentDTO> getStudentList() {
@@ -89,10 +93,14 @@ public class StudentServiceImpl implements StudentService{
             studentDTO.setPhoto(imagePath.toUri().toString());
         }
         studentDTO.setPhotoCIN(filePath.toUri().toString());
+        AppUser appUser= accountService.addNewUser(studentDTO.getEmail(),"12345","12345");
+        accountService.addRoleToUser(appUser.getUsername(),"USER");
         Student student = mapper.fromStudentDTO(studentDTO);
         Student savedStudent = studentRepository.save(student);
+        emailService.sendEmail(studentDTO.getEmail(),"Validation subscription","your password is 12345 and your username is "+studentDTO.getEmail());
         return mapper.fromStudent(savedStudent);
     }
+
     private String getFileExtension(MultipartFile file) {
         String filename = file.getOriginalFilename();
         if (filename != null && filename.contains(".")) {
