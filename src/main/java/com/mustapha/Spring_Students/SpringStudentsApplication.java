@@ -8,6 +8,7 @@ import com.mustapha.Spring_Students.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +41,8 @@ return args -> {
 };
 
 	}
-//	@Bean
-	CommandLineRunner commandLineRunner(StudentService studentService,
+	//@Bean
+	CommandLineRunner commandLineRunner(StudentService studentService, AccountService accountService,
     ModuleService moduleService,
 	PaymentService paymentService,
 	RespoProgramService respoProgramService,
@@ -61,19 +62,15 @@ return args -> {
                     throw new RuntimeException(e);
                 }
             });
-			programService.getPrograms().forEach(programDTO ->{
+		programService.getPrograms().forEach(programDTO ->{
+
                 try {
-                    studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha").build());
+                    studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).email("user").firstName("Mustapha").build());
                 } catch (IOException | ProgramNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 try {
-					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha1").build());
-				} catch (IOException | ProgramNotFoundException e) {
-					throw new RuntimeException(e);
-				}
-                try {
-					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha2").build());
+					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).email("admin").firstName("Mustapha1").build());
 				} catch (IOException | ProgramNotFoundException e) {
 					throw new RuntimeException(e);
 				}
@@ -95,7 +92,7 @@ return args -> {
 						 amount((10000+Math.random()*20000)).
 						 date(LocalDate.now())
 						 .type(paymentTypes[index])
-						 .studentCNE(student.getCIN())
+						 .email(student.getEmail())
 						 .build();
                  try {
                      paymentService.savePayment(null,payment);

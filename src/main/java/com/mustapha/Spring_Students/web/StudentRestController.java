@@ -2,8 +2,10 @@ package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
+import com.mustapha.Spring_Students.repositories.StudentRepository;
 import com.mustapha.Spring_Students.service.PaymentService;
 import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
@@ -20,7 +22,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 public class StudentRestController {
-    private PaymentService paymentService;
     private StudentService studentService;
     @GetMapping("/students")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
@@ -42,8 +43,8 @@ public class StudentRestController {
     public List<StudentDTO> findStudentByProgram(@PathVariable(name ="programID" ) String program) throws ProgramNotFoundException {
         return studentService.findByProgram(program);
     }
-    @PostMapping(value = "/student", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public StudentDTO saveStudentDTO(@RequestParam("photoCIN") MultipartFile file,@RequestParam("profile") MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
+    @PostMapping(value = "/saveStudent", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public StudentDTO saveStudentDTO(@RequestParam("photoCIN") MultipartFile file,@RequestParam(value = "profile", required = false) MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
       return studentService.saveStudent(file,profile,newStudentDTO);
     }
 }

@@ -43,10 +43,16 @@ public class PaymentRestController {
     public List<PaymentDTO> findPaymentByStudentCode(@PathVariable String code){
         return paymentService.getPaymentByCNE(code);
     }
+    @GetMapping("/payment/{email}/student")
+    // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    public List<PaymentDTO> findPaymentByStudentEmail(@PathVariable String email){
+        return paymentService.getPaymentByEmail(email);
+    }
     @PostMapping(value = "/payment",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    // @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public PaymentDTO savePayment(@RequestParam("file") MultipartFile file, NewPaymentDTO newPaymentDTO
                                    ) throws IOException {
+        log.info("pyment reçu "+newPaymentDTO.toString());
         return paymentService.savePayment(file,newPaymentDTO);
     }
 

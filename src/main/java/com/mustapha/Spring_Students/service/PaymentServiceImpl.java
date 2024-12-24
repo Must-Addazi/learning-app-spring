@@ -24,8 +24,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-
-
 @Service
 @Transactional
 @AllArgsConstructor
@@ -33,17 +31,21 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
     private StudentRepository studentRepository;
     private PaymentRepository paymentRepository;
+    private StudentService studentService;
     private Mapper mapper;
 
     public PaymentDTO savePayment(MultipartFile file, NewPaymentDTO newPaymentDTO) throws IOException {
+        log.info("pyment reçu "+newPaymentDTO.toString());
         Path path= Paths.get(System.getProperty("user.home"),"students-app-files","payments");
         if(!Files.exists(path)){
             Files.createDirectories(path);
         }
-        Student student=studentRepository.findByCIN(newPaymentDTO.getStudentCNE());
+        log.info("email is "+newPaymentDTO.getEmail());
+        Student student=studentRepository.findByEmail(newPaymentDTO.getEmail());
         PaymentDTO paymentDTO=mapper.fromNewpaymentDTO(newPaymentDTO);
         paymentDTO.setStudentDTO(mapper.fromStudent(student));
         paymentDTO.setStatus(PaymentStatus.CREATED);
+        paymentDTO.setType(paymentDTO.getType());
         String FileID;
         if(student != null) {
              FileID = student.getFirstName() + student.getLastName() + UUID.randomUUID();
@@ -52,7 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
         Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","payments",FileID+".pdf");
         if(file !=null)
-        Files.copy(file.getInputStream(),filePath);
+         Files.copy(file.getInputStream(),filePath);
         paymentDTO.setFile(filePath.toUri().toString());
         Payment payment = mapper.fromPaymentDTO(paymentDTO);
         Payment savedPayment= paymentRepository.save(payment);
@@ -148,6 +150,13 @@ public class PaymentServiceImpl implements PaymentService {
         Student student=studentRepository.findByCIN(cne);
         List<Payment> paymentList=paymentRepository.findByStudent(student);
         return paymentList.stream().map(payment -> mapper.fromPayment(payment)).toList();
+    }
+
+    @Override
+    public List<PaymentDTO> getPaymentByEmail(String email) {
+    Student student= studentRepository.findByEmail(email);
+    List<Payment> paymentList=paymentRepository.findByStudent(student);
+    return paymentList.stream().map(payment -> mapper.fromPayment(payment)).toList();
     }
 
 }

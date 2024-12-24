@@ -93,7 +93,7 @@ public class StudentServiceImpl implements StudentService{
             studentDTO.setPhoto(imagePath.toUri().toString());
         }
         studentDTO.setPhotoCIN(filePath.toUri().toString());
-        AppUser appUser= accountService.addNewUser(studentDTO.getEmail(),"12345","12345");
+       AppUser appUser= accountService.addNewUser(studentDTO.getEmail(),"12345","12345");
         accountService.addRoleToUser(appUser.getUsername(),"USER");
         Student student = mapper.fromStudentDTO(studentDTO);
         Student savedStudent = studentRepository.save(student);

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor @NoArgsConstructor @Builder
 public class NewPaymentDTO {
-   private String studentCNE;
+   private String email;
    private LocalDate date;
    private Double amount;
    private PaymentType type;

@@ -2,6 +2,7 @@ package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
+import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.enums.PaymentStatus;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,5 +19,6 @@ public interface PaymentService {
     PaymentDTO getPayment(Long id) throws PaymentNotFoundException;
     List<PaymentDTO> getPaymentList();
     List<PaymentDTO> getPaymentByCNE(String cne);
+    List<PaymentDTO> getPaymentByEmail(String email);
 
 }

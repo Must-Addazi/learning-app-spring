@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student,String> {
     Student findByCIN(String cne);
+    Student findByEmail(String email);
     @Query("SELECT s FROM Student s WHERE s.firstName LIKE %:name% OR s.lastName LIKE %:name%")
     List<Student> searchByName(@Param("name") String name);
     List<Student> findByProgram(Program program);

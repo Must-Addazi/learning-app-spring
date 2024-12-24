@@ -65,11 +65,13 @@ public class SecurityConfig{
 
        return httpSecurity
                .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-               .authorizeHttpRequests(ar-> ar.requestMatchers("/auth/login/**").permitAll())
+               .authorizeHttpRequests(ar -> ar
+                      .requestMatchers("/auth/login/**", "/program/**","/modules/**","/saveStudent/**").permitAll()
+                    .anyRequest().authenticated()
+               )
                .csrf(AbstractHttpConfigurer::disable)
                .cors(Customizer.withDefaults())
                .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
-               .authorizeHttpRequests(rq->rq.anyRequest().permitAll())
                .userDetailsService(userDetailServiceImpl)
                .build();
     }
