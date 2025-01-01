@@ -39,7 +39,6 @@ return args -> {
 	accountService.addRoleToUser("admin","ADMIN");
 
 };
-
 	}
 	//@Bean
 	CommandLineRunner commandLineRunner(StudentService studentService, AccountService accountService,

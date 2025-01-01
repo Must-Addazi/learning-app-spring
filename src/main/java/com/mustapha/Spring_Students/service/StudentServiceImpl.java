@@ -137,6 +137,13 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    public StudentDTO findByEmail(String email) {
+        StudentDTO studentDTO= mapper.fromStudent(studentRepository.findByEmail(email));
+        studentDTO.setPhoto(encodeImageToBase64(studentDTO.getPhoto()));
+        return studentDTO;
+    }
+
+    @Override
     public List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException {
         Program program = mapper.fromProgramDTO(programService.getProgram(programId));
         List<Student> studentList= studentRepository.findByProgram(program);

@@ -31,7 +31,6 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
     private StudentRepository studentRepository;
     private PaymentRepository paymentRepository;
-    private StudentService studentService;
     private Mapper mapper;
 
     public PaymentDTO savePayment(MultipartFile file, NewPaymentDTO newPaymentDTO) throws IOException {
@@ -58,8 +57,6 @@ public class PaymentServiceImpl implements PaymentService {
         paymentDTO.setFile(filePath.toUri().toString());
         Payment payment = mapper.fromPaymentDTO(paymentDTO);
         Payment savedPayment= paymentRepository.save(payment);
-        student.setAmountPaid(student.getAmountPaid()+ payment.getAmount());
-        studentRepository.save(student);
         return mapper.fromPayment(savedPayment);
     }
     public PaymentDTO updatePayment(Long paymentId, MultipartFile file, PaymentDTO paymentDTO) throws IOException {
@@ -126,6 +123,11 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO updatePaymentStatus(Long paymentID, PaymentStatus status) throws PaymentNotFoundException {
         PaymentDTO paymentDTO= getPayment(paymentID);
         Payment payment= mapper.fromPaymentDTO(paymentDTO);
+        if(status==PaymentStatus.VALIDATED){
+            Student student= mapper.fromStudentDTO(paymentDTO.getStudentDTO());
+            student.setAmountPaid(student.getAmountPaid()+paymentDTO.getAmount());
+            studentRepository.save(student);
+        }
         payment.setStatus(status);
         paymentRepository.save(payment);
         return mapper.fromPayment(payment);

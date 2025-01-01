@@ -19,6 +19,6 @@ public interface StudentService {
     List<StudentDTO> searchStudentByName(String name);
 
     StudentDTO findByCIN(String code);
-
+    StudentDTO findByEmail(String email);
     List<StudentDTO> findByProgram(String program) throws ProgramNotFoundException;
 }

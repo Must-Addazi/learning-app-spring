@@ -2,11 +2,8 @@ package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
-import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
-import com.mustapha.Spring_Students.repositories.StudentRepository;
-import com.mustapha.Spring_Students.service.PaymentService;
 import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +34,11 @@ public class StudentRestController {
    // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public StudentDTO findStudentByCNE(@PathVariable String code){
         return studentService.findByCIN(code);
+    }
+    @GetMapping("/studentEmail/{email}")
+    // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    public StudentDTO findStudentByEmail(@PathVariable String email){
+        return studentService.findByEmail(email);
     }
     @GetMapping("/studentDTO/{programID}")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")

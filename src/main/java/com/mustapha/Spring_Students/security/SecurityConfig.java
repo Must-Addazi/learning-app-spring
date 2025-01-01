@@ -65,14 +65,15 @@ public class SecurityConfig{
 
        return httpSecurity
                .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-               .authorizeHttpRequests(ar -> ar
-                      .requestMatchers("/auth/login/**", "/program/**","/modules/**","/saveStudent/**").permitAll()
-                    .anyRequest().authenticated()
-               )
+          //    .authorizeHttpRequests(ar -> ar
+          //            .requestMatchers("/auth/login/**", "/program/**","/modules/**","/saveStudent/**").permitAll()
+          //          .anyRequest().authenticated()
+          //     )
                .csrf(AbstractHttpConfigurer::disable)
                .cors(Customizer.withDefaults())
                .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
                .userDetailsService(userDetailServiceImpl)
+               .authorizeHttpRequests(ar->ar.anyRequest().permitAll())
                .build();
     }
     @Bean
