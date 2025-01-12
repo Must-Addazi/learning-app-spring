@@ -86,5 +86,9 @@ public class PaymentRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    @DeleteMapping("/deletePayment/{id}")
+    public boolean deletePayment(@PathVariable Long id) throws PaymentNotFoundException, IOException {
+        return paymentService.deletePayment(id);
+    }
 
 }

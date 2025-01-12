@@ -12,5 +12,6 @@ public class ProgramDTO {
     private String name;
     private double price;
     private String timing;
+    private String posterFile;
     private ResponsibleProgramDTO responsibleProgramDTO;
 }

@@ -35,17 +35,17 @@ public class ProgramServiceImpl implements ProgramService{
 
     @Override
     public ProgramDTO saveProgram(MultipartFile file,ProgramDTO programDTO) throws IOException {
-        Path path= Paths.get(System.getProperty("user.home"),"students-app-files","timing");
+        Path path= Paths.get(System.getProperty("user.home"),"students-app-files","posterFiles");
         if(!Files.exists(path)){
             Files.createDirectories(path);
         }
         programDTO.setId(UUID.randomUUID().toString());
         String FileID;
         FileID = programDTO.getName()+UUID.randomUUID();
-        Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","timing",FileID+".pdf");
+        Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","posterFiles",FileID+".pdf");
         if(file !=null)
             Files.copy(file.getInputStream(),filePath);
-        programDTO.setTiming(filePath.toUri().toString());
+        programDTO.setPosterFile(filePath.toUri().toString());
         Program program=mapper.fromProgramDTO(programDTO);
         program.setResponsibleProgram(mapper.fromResponsibleProgramDTO(programDTO.getResponsibleProgramDTO()));
         return mapper.fromProgram(programRepository.save(program));
@@ -56,9 +56,9 @@ public class ProgramServiceImpl implements ProgramService{
         List<Program> programList= programRepository.findAll();
         return programList.stream().map(program -> mapper.fromProgram(program)).toList();
     }
-    public byte[] getTimingFile( String programId) throws IOException, ProgramNotFoundException {
+    public byte[] getPosterFile( String programId) throws IOException, ProgramNotFoundException {
         Program program = mapper.fromProgramDTO(getProgram(programId));
-        String filePath=program.getTiming();
+        String filePath=program.getPosterFile();
         return Files.readAllBytes(Path.of(URI.create(filePath)));
     }
 }

@@ -11,6 +11,7 @@ import com.mustapha.Spring_Students.repositories.StudentRepository;
 import com.mustapha.Spring_Students.security.entities.AppUser;
 import com.mustapha.Spring_Students.security.service.AccountService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 @Transactional
@@ -66,10 +68,18 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public StudentDTO saveStudent(MultipartFile file,MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
+    public StudentDTO saveStudent(MultipartFile file,MultipartFile bacFile,MultipartFile diplomaFile,MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
         Path path= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles");
         if(!Files.exists(path)){
             Files.createDirectories(path);
+        }
+        Path pathBac= Paths.get(System.getProperty("user.home"),"students-app-files","BacFiles");
+        if(!Files.exists(pathBac)){
+            Files.createDirectories(pathBac);
+        }
+        Path pathDiploma = Paths.get(System.getProperty("user.home"),"students-app-files","DiplomaFiles");
+        if(!Files.exists(pathDiploma)){
+            Files.createDirectories(pathDiploma);
         }
         Path pathProfile= Paths.get(System.getProperty("user.home"),"students-app-files","profileFiles");
         if(!Files.exists(pathProfile)){
@@ -80,13 +90,25 @@ public class StudentServiceImpl implements StudentService{
         studentDTO.setProgramDTO(mapper.fromProgram(program));
         studentDTO.setId(UUID.randomUUID().toString());
         studentDTO.setAmountPaid(0);
-        String FileID;
+        String CinFileID;
+        String bacFileID;
+        String diplomaFileID;
         String photoID;
-        FileID = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN();
+        CinFileID = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN();
+        bacFileID = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN()+"bac";
+        diplomaFileID= studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN()+"diploma";
         photoID= studentDTO.getFirstName() + studentDTO.getLastName()+studentDTO.getCIN();
-        Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles",FileID+".pdf");
+        Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles",CinFileID+".pdf");
         if(file !=null && Objects.requireNonNull(file.getOriginalFilename()).endsWith(".pdf"))
             Files.copy(file.getInputStream(),filePath);
+        Path bacPath= Paths.get(System.getProperty("user.home"),"students-app-files","BacFiles",bacFileID+".pdf");
+        if(bacFile !=null && Objects.requireNonNull(bacFile.getOriginalFilename()).endsWith(".pdf"))
+            Files.copy(bacFile.getInputStream(),bacPath);
+
+        Path diplomaPath= Paths.get(System.getProperty("user.home"),"students-app-files","DiplomaFiles",diplomaFileID+".pdf");
+        if(diplomaFile !=null && Objects.requireNonNull(diplomaFile.getOriginalFilename()).endsWith(".pdf"))
+            Files.copy(diplomaFile.getInputStream(),diplomaPath);
+
         if (profile != null && (Objects.requireNonNull(profile.getOriginalFilename()).endsWith(".jpg") || profile.getOriginalFilename().endsWith(".png"))) {
             Path imagePath = Paths.get(System.getProperty("user.home"), "students-app-files", "profileFiles", photoID + getFileExtension(profile));
             Files.copy(profile.getInputStream(), imagePath);
@@ -98,6 +120,7 @@ public class StudentServiceImpl implements StudentService{
         Student student = mapper.fromStudentDTO(studentDTO);
         Student savedStudent = studentRepository.save(student);
         emailService.sendEmail(studentDTO.getEmail(),"Validation subscription","your password is 12345 and your username is "+studentDTO.getEmail());
+        emailService.sendEmail(studentDTO.getProgramDTO().getResponsibleProgramDTO().getEmail(),"Nouveau inscription","Nous vous informaons qu'un nouveau etudiant avec CIN "+studentDTO.getCIN()+" a été inscrit merci de consulter votre platforme");
         return mapper.fromStudent(savedStudent);
     }
 

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -17,8 +18,13 @@ public class StudentDTO {
     private String lastName;
     private String email;
     private String phone;
+    private LocalDate birthDate;
+    private Double NoteBac;
+    private Double NoteDiploma;
     private double amountPaid;
     private String photoCIN;
     private String photo;
+    private String bacFile;
+    private String diplomaFile;
     private ProgramDTO programDTO;
 }

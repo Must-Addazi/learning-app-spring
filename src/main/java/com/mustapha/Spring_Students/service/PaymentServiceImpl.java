@@ -105,10 +105,9 @@ public class PaymentServiceImpl implements PaymentService {
         String filePath= payment.getFile();
         return Files.readAllBytes(Path.of(URI.create(filePath)));
     }
-    public void deletePayment(Long id) throws PaymentNotFoundException, IOException {
+    public Boolean deletePayment(Long id) throws PaymentNotFoundException, IOException {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: " + id));
-
         String filePath = payment.getFile();
         if (filePath != null) {
             Path path = Paths.get(URI.create(filePath));
@@ -117,6 +116,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
         paymentRepository.delete(payment);
+        return paymentRepository.existsById(payment.getId());
     }
 
     @Override

@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -32,9 +33,15 @@ public class Student {
     private String email;
     @NotEmpty(message = "phone must be not empty")
     private String phone;
+    private LocalDate birthDate;
+    private Double NoteBac;
+    private Double NoteDiploma;
     private double amountPaid;
+    private Boolean Convene;
     private String photoCIN;
     private String photo;
+    private String bacFile;
+    private String diplomaFile;
     @ManyToOne
     private Program program;
     @OneToMany(mappedBy = "student",fetch = FetchType.LAZY)

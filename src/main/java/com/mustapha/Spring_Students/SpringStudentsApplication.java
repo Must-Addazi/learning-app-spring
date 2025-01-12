@@ -64,17 +64,17 @@ return args -> {
 		programService.getPrograms().forEach(programDTO ->{
 
                 try {
-                    studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).email("user").firstName("Mustapha").build());
+                    studentService.saveStudent(null,null,null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).email("user").firstName("Mustapha").build());
                 } catch (IOException | ProgramNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 try {
-					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).email("admin").firstName("Mustapha1").build());
+					studentService.saveStudent(null,null,null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).email("admin").firstName("Mustapha1").build());
 				} catch (IOException | ProgramNotFoundException e) {
 					throw new RuntimeException(e);
 				}
                 try {
-					studentService.saveStudent(null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha3").build());
+					studentService.saveStudent(null,null,null,null,NewStudentDTO.builder().programID(programDTO.getId()).CIN(UUID.randomUUID().toString()).firstName("Mustapha3").build());
 				} catch (IOException | ProgramNotFoundException e) {
 					throw new RuntimeException(e);
 				}

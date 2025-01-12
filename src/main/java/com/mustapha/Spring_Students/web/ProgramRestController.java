@@ -30,17 +30,17 @@ public class ProgramRestController {
         return programService.getProgram(id);
     }
     @PostMapping(value = "/saveProgram", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ProgramDTO saveStudentDTO(@RequestParam("timing") MultipartFile file, NewProgram newProgram) throws IOException, ResponsibleProgramNotFoundException {
+    public ProgramDTO saveStudentDTO(@RequestParam("poster") MultipartFile file, NewProgram newProgram) throws IOException, ResponsibleProgramNotFoundException {
         ResponsibleProgramDTO responsibleProgramDTO = respoProgramService.getRespoProgram(newProgram.getRespId());
         ProgramDTO programDTO= ProgramDTO.builder().price(newProgram.getPrice())
                 .name(newProgram.getName())
                 .responsibleProgramDTO(responsibleProgramDTO).build();
         return programService.saveProgram(file,programDTO);
     }
-    @GetMapping("/timingFile/{programId}")
-    public ResponseEntity<byte[]> getTimingFile(@PathVariable String programId) {
+    @GetMapping("/posterFile/{programId}")
+    public ResponseEntity<byte[]> getPosterFile(@PathVariable String programId) {
         try {
-            byte[] fileBytes = programService.getTimingFile(programId);
+            byte[] fileBytes = programService.getPosterFile(programId);
             ProgramDTO programDTO= programService.getProgram(programId);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);

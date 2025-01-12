@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +17,8 @@ public class NewStudentDTO {
     private String lastName;
     private String email;
     private String phone;
+    private LocalDate birthDate;
+    private Double NoteBac;
+    private Double NoteDiploma;
     private String programID;
 }

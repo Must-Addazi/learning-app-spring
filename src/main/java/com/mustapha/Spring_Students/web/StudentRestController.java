@@ -6,6 +6,7 @@ import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,10 @@ public class StudentRestController {
         return studentService.findByProgram(program);
     }
     @PostMapping(value = "/saveStudent", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public StudentDTO saveStudentDTO(@RequestParam("photoCIN") MultipartFile file,@RequestParam(value = "profile", required = false) MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
-      return studentService.saveStudent(file,profile,newStudentDTO);
+    public StudentDTO saveStudentDTO(@RequestParam("photoCIN") MultipartFile CinFile,
+                                     @RequestParam("bacFile") MultipartFile bacFile,
+                                     @RequestParam("diplomaFile") MultipartFile diplomaFile,
+                                     @RequestParam(value = "profile", required = false) MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
+      return studentService.saveStudent(CinFile,bacFile,diplomaFile,profile,newStudentDTO);
     }
 }
