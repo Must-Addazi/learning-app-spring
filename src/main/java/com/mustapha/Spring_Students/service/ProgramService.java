@@ -19,5 +19,7 @@ public interface ProgramService {
 
     List<ProgramDTO> getPrograms();
 
-    byte[] getPosterFile(String paymentId) throws IOException, ProgramNotFoundException;
+    byte[] getPosterFile(String programId) throws IOException, ProgramNotFoundException;
+
+    Boolean deleteProgram(String programId) throws IOException;
 }

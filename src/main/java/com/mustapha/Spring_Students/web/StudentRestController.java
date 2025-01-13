@@ -53,4 +53,8 @@ public class StudentRestController {
                                      @RequestParam(value = "profile", required = false) MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
       return studentService.saveStudent(CinFile,bacFile,diplomaFile,profile,newStudentDTO);
     }
+    @DeleteMapping("/deleteStudent/{id}")
+    public Boolean deleteStudent(@PathVariable String id) throws StudentNotFoundException, IOException {
+        return studentService.deleteStudent(id);
+    }
 }

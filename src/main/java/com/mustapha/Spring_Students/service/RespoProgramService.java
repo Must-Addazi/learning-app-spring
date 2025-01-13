@@ -9,5 +9,6 @@ public interface RespoProgramService {
     ResponsibleProgramDTO getRespoProgram(String id) throws ResponsibleProgramNotFoundException;
     ResponsibleProgramDTO saveRespoProgram(ResponsibleProgramDTO responsibleProgramDTO);
     List<ResponsibleProgramDTO> getResposProgram();
+    void deleteRespoProgram(String id);
     ResponsibleProgramDTO updateRespo(String id,ResponsibleProgramDTO responsibleProgramDTO);
 }

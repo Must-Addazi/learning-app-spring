@@ -2,7 +2,6 @@ package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.ResponsibleProgramDTO;
 import com.mustapha.Spring_Students.entities.ResponsibleProgram;
-import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.exceptions.ResponsibleProgramNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.ResponsibleProgramRepository;
@@ -44,6 +43,11 @@ public class RespoProgramServiceImpl implements RespoProgramService{
     public List<ResponsibleProgramDTO> getResposProgram() {
         List<ResponsibleProgram> responsibleProgramList=responsibleProgramRepository.findAll();
         return responsibleProgramList.stream().map(responsibleProgram -> mapper.fromResponsibleProgram(responsibleProgram)).toList();
+    }
+
+    @Override
+    public void deleteRespoProgram(String id) {
+        responsibleProgramRepository.deleteById(id);
     }
 
     @Override

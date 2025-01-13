@@ -2,8 +2,10 @@ package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.entities.Program;
 import com.mustapha.Spring_Students.entities.Student;
+import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -133,12 +136,35 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public void deleteStudent(String id) throws StudentNotFoundException {
+    public Boolean deleteStudent(String id) throws StudentNotFoundException, IOException {
         StudentDTO studentDTO= getStudent(id);
         Student student= mapper.fromStudentDTO(studentDTO);
-    studentRepository.delete(student);
-    }
+        String CinPath= student.getPhotoCIN();
+        String profilePath= student.getPhoto();
+        String bacPath= student.getBacFile();
+        String diplomaPath= student.getDiplomaFile();
+        if( CinPath != null){
+            Path path= Paths.get(URI.create(CinPath));
+            Files.deleteIfExists(path);
+        }
+        if( profilePath != null){
+            Path path= Paths.get(URI.create(profilePath));
+            Files.deleteIfExists(path);
+        }
+        if( bacPath != null){
+            Path path= Paths.get(URI.create(bacPath));
+            Files.deleteIfExists(path);
+        }
+        if( diplomaPath != null){
+            Path path= Paths.get(URI.create(diplomaPath));
+            Files.deleteIfExists(path);
+        }
+        accountService.removeRoleFromUser(student.getEmail(),"USER");
+        accountService.removeUser(student.getEmail());
+        studentRepository.delete(student);
+        return studentRepository.existsById(id);
 
+    }
     @Override
     public StudentDTO updateStudent(String id,StudentDTO studentDTO) {
         Student student= mapper.fromStudentDTO(studentDTO);

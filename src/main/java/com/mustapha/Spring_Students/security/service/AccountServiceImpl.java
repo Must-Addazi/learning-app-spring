@@ -34,11 +34,11 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public AppRole addNewRole(String role) {
+    public void addNewRole(String role) {
         AppRole appRole=appRoleRepository.findById(role).orElse(null);
         if(appRole!=null) throw new RuntimeException("this role already exist");
         appRole=AppRole.builder().role(role).build();
-        return appRoleRepository.save(appRole);
+        appRoleRepository.save(appRole);
     }
 
     @Override
@@ -58,6 +58,11 @@ public class AccountServiceImpl implements AccountService{
         AppRole appRole = appRoleRepository.findById(role).orElse(null);
         appUser.getRoles().remove(appRole);
         //appUserRepository.save(appUser);
+    }
+
+    @Override
+    public Boolean removeUser(String username) {
+   return appUserRepository.deleteByUsername(username)>0;
     }
 
     @Override

@@ -1,11 +1,7 @@
 package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.ProgramDTO;
-import com.mustapha.Spring_Students.dtos.StudentDTO;
-import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.entities.Program;
-import com.mustapha.Spring_Students.entities.Student;
-import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.ProgramRepository;
@@ -27,6 +23,7 @@ import java.util.UUID;
 @Transactional
 public class ProgramServiceImpl implements ProgramService{
     private ProgramRepository programRepository;
+    private RespoProgramService respoProgramService;
     private Mapper mapper;
     @Override
     public ProgramDTO getProgram(String id) throws ProgramNotFoundException {
@@ -60,5 +57,18 @@ public class ProgramServiceImpl implements ProgramService{
         Program program = mapper.fromProgramDTO(getProgram(programId));
         String filePath=program.getPosterFile();
         return Files.readAllBytes(Path.of(URI.create(filePath)));
+    }
+
+    @Override
+    public Boolean deleteProgram(String programId) throws IOException {
+        Program program = programRepository.findById(programId).get();
+        respoProgramService.deleteRespoProgram(program.getResponsibleProgram().getId());
+        String poserFile = program.getPosterFile();
+        if (poserFile != null) {
+            Path path = Paths.get(URI.create(poserFile));
+            Files.deleteIfExists(path);
+        }
+        programRepository.deleteById(programId);
+        return programRepository.existsById(programId);
     }
 }

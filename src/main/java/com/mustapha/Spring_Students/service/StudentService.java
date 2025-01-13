@@ -14,7 +14,7 @@ public interface StudentService {
     List<StudentDTO> getStudentList();
     StudentDTO getStudent(String id) throws StudentNotFoundException;
     StudentDTO saveStudent(MultipartFile file,MultipartFile bacFile, MultipartFile diplomaFile ,MultipartFile profile , NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException;
-    void deleteStudent(String id) throws StudentNotFoundException;
+    Boolean deleteStudent(String id) throws StudentNotFoundException, IOException;
     StudentDTO updateStudent(String id,StudentDTO studentDTO);
     List<StudentDTO> searchStudentByName(String name);
 
