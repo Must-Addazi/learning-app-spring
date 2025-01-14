@@ -1,8 +1,10 @@
 package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.*;
+import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ResponsibleProgramNotFoundException;
+import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.service.ProgramService;
 import com.mustapha.Spring_Students.service.RespoProgramService;
 import lombok.AllArgsConstructor;
@@ -56,5 +58,10 @@ public class ProgramRestController {
         } catch (ProgramNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+    @DeleteMapping("/deleteProgram/{id}")
+    public Boolean deleteProgram(@PathVariable String id) throws StudentNotFoundException, IOException, PaymentNotFoundException, ProgramNotFoundException {
+        log.info("programID "+id);
+        return programService.deleteProgram(id);
     }
 }

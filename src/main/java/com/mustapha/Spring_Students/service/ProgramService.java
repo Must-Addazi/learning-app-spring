@@ -4,6 +4,7 @@ import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
+import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -21,5 +22,5 @@ public interface ProgramService {
 
     byte[] getPosterFile(String programId) throws IOException, ProgramNotFoundException;
 
-    Boolean deleteProgram(String programId) throws IOException;
+    Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, StudentNotFoundException, PaymentNotFoundException;
 }

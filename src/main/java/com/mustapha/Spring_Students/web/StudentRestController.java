@@ -2,6 +2,7 @@ package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.service.StudentService;
@@ -54,7 +55,7 @@ public class StudentRestController {
       return studentService.saveStudent(CinFile,bacFile,diplomaFile,profile,newStudentDTO);
     }
     @DeleteMapping("/deleteStudent/{id}")
-    public Boolean deleteStudent(@PathVariable String id) throws StudentNotFoundException, IOException {
+    public Boolean deleteStudent(@PathVariable String id) throws StudentNotFoundException, IOException, PaymentNotFoundException {
         return studentService.deleteStudent(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
+import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.entities.Program;
@@ -9,6 +10,7 @@ import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
+import com.mustapha.Spring_Students.repositories.ProgramRepository;
 import com.mustapha.Spring_Students.repositories.StudentRepository;
 import com.mustapha.Spring_Students.security.entities.AppUser;
 import com.mustapha.Spring_Students.security.service.AccountService;
@@ -34,7 +36,8 @@ import java.util.UUID;
 @Transactional
 public class StudentServiceImpl implements StudentService{
     private StudentRepository studentRepository;
-    private ProgramService programService;
+    private ProgramRepository programRepository;
+    private PaymentService paymentService;
     private AccountService accountService;
     private EmailService emailService;
     private Mapper mapper;
@@ -88,7 +91,7 @@ public class StudentServiceImpl implements StudentService{
         if(!Files.exists(pathProfile)){
             Files.createDirectories(pathProfile);
         }
-        Program program=mapper.fromProgramDTO(programService.getProgram(newStudentDTO.getProgramID()));
+        Program program=programRepository.findById(newStudentDTO.getProgramID()).get();
         StudentDTO studentDTO = mapper.fromNewStudentDTO(newStudentDTO);
         studentDTO.setProgramDTO(mapper.fromProgram(program));
         studentDTO.setId(UUID.randomUUID().toString());
@@ -136,7 +139,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public Boolean deleteStudent(String id) throws StudentNotFoundException, IOException {
+    public Boolean deleteStudent(String id) throws StudentNotFoundException, IOException, PaymentNotFoundException {
         StudentDTO studentDTO= getStudent(id);
         Student student= mapper.fromStudentDTO(studentDTO);
         String CinPath= student.getPhotoCIN();
@@ -161,9 +164,12 @@ public class StudentServiceImpl implements StudentService{
         }
         accountService.removeRoleFromUser(student.getEmail(),"USER");
         accountService.removeUser(student.getEmail());
+        List<PaymentDTO> paymentDTOS= paymentService.getPaymentByEmail(student.getEmail());
+        for(PaymentDTO payment : paymentDTOS){
+            paymentService.deletePayment(payment.getId());
+        }
         studentRepository.delete(student);
         return studentRepository.existsById(id);
-
     }
     @Override
     public StudentDTO updateStudent(String id,StudentDTO studentDTO) {
@@ -194,7 +200,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException {
-        Program program = mapper.fromProgramDTO(programService.getProgram(programId));
+        Program program = programRepository.findById(programId).orElseThrow(()-> new ProgramNotFoundException("program not found"));
         List<Student> studentList= studentRepository.findByProgram(program);
         return studentList.stream().map(student -> {
             StudentDTO studentDTO = mapper.fromStudent(student);
