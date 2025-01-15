@@ -3,10 +3,12 @@ package com.mustapha.Spring_Students.service;
 import com.mustapha.Spring_Students.dtos.ModuleDTO;
 import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.entities.CModule;
+import com.mustapha.Spring_Students.entities.Program;
 import com.mustapha.Spring_Students.exceptions.ModuleNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.ModuleRepository;
+import com.mustapha.Spring_Students.repositories.ProgramRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +18,9 @@ import java.util.List;
 @Service
 @Transactional
 public class ModuleServiceImpl implements ModuleService{
-    public ModuleRepository moduleRepository;
-    public ProgramService programService;
-    public Mapper mapper;
+    private ModuleRepository moduleRepository;
+    private ProgramRepository programRepository;
+    private Mapper mapper;
     @Override
     public List<ModuleDTO> getModuleList() {
         List<CModule> CModuleList = moduleRepository.findAll();
@@ -50,12 +52,15 @@ public class ModuleServiceImpl implements ModuleService{
     @Override
     public void deleteModule(String id) {
         moduleRepository.deleteById(id);
-
     }
 
     @Override
     public List<ModuleDTO> getModuleByProgram(String programId) throws ProgramNotFoundException {
-        ProgramDTO programDTO= programService.getProgram(programId);
-        List<CModule> moduleList= moduleRepository.findByProgram(mapper.fromProgramDTO(programDTO));
+        Program program= programRepository.findById(programId).orElseThrow(()-> new ProgramNotFoundException("Program not Found in module "));
+    List<CModule> moduleList= moduleRepository.findByProgram(program);
         return  moduleList.stream().map(CModule -> mapper.fromModule(CModule)).toList();    }
+    public List<ModuleDTO> getModuleByProgramV2(Program program) {
+        List<CModule> moduleList= moduleRepository.findByProgram(program);
+        return  moduleList.stream().map(CModule -> mapper.fromModule(CModule)).toList();    }
+
 }

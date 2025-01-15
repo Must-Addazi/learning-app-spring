@@ -2,6 +2,7 @@ package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.entities.Program;
 import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
@@ -22,4 +23,5 @@ public interface StudentService {
     StudentDTO findByCIN(String code);
     StudentDTO findByEmail(String email);
     List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException;
+    List<StudentDTO> findByProgramV2(Program program);
 }

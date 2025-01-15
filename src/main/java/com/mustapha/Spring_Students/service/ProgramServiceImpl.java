@@ -1,7 +1,9 @@
 package com.mustapha.Spring_Students.service;
 
+import com.mustapha.Spring_Students.dtos.ModuleDTO;
 import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.entities.CModule;
 import com.mustapha.Spring_Students.entities.Program;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
@@ -9,6 +11,7 @@ import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.ProgramRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 @Transactional
@@ -28,6 +32,7 @@ public class ProgramServiceImpl implements ProgramService{
     private ProgramRepository programRepository;
     private RespoProgramService respoProgramService;
     private StudentService studentService;
+    private ModuleService moduleService;
     private Mapper mapper;
     @Override
     public ProgramDTO getProgram(String id) throws ProgramNotFoundException {
@@ -65,19 +70,34 @@ public class ProgramServiceImpl implements ProgramService{
 
     @Override
     public Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, StudentNotFoundException, PaymentNotFoundException {
-        Program program = programRepository.findById(programId).get();
-        respoProgramService.deleteRespoProgram(program.getResponsibleProgram().getId());
-        String poserFile = program.getPosterFile();
-        if (poserFile != null) {
-            Path path = Paths.get(URI.create(poserFile));
+        Program program = programRepository.findById(programId)
+                .orElseThrow(() -> new ProgramNotFoundException("Program not found with ID: " + programId));
+
+        if (program.getResponsibleProgram() != null) {
+            respoProgramService.deleteRespoProgram(program.getResponsibleProgram().getId());
+            log.info("delete respo");
+        }
+
+        String posterFile = program.getPosterFile();
+        if (posterFile != null) {
+            Path path = Paths.get(URI.create(posterFile));
             Files.deleteIfExists(path);
         }
-         List<StudentDTO> studentDTOS= studentService.findByProgram(program.getId());
-
-        for(StudentDTO studentDTO:studentDTOS){
+        List<ModuleDTO> cModules= moduleService.getModuleByProgramV2(program);
+        log.info("avant delete module");
+        for( ModuleDTO moduleDTO:cModules){
+            log.info("delete module");
+            moduleService.deleteModule(moduleDTO.getId());
+        }
+        List<StudentDTO> studentDTOS = studentService.findByProgramV2(program);
+        log.info("avant delete student");
+        for (StudentDTO studentDTO : studentDTOS) {
+            log.info("delete student");
             studentService.deleteStudent(studentDTO.getId());
         }
         programRepository.deleteById(programId);
-        return programRepository.existsById(programId);
+
+        return !programRepository.existsById(programId);
     }
+
 }

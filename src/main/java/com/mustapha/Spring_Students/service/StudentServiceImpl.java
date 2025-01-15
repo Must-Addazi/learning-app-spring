@@ -169,7 +169,7 @@ public class StudentServiceImpl implements StudentService{
             paymentService.deletePayment(payment.getId());
         }
         studentRepository.delete(student);
-        return studentRepository.existsById(id);
+        return !studentRepository.existsById(id);
     }
     @Override
     public StudentDTO updateStudent(String id,StudentDTO studentDTO) {
@@ -201,6 +201,14 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException {
         Program program = programRepository.findById(programId).orElseThrow(()-> new ProgramNotFoundException("program not found"));
+        List<Student> studentList= studentRepository.findByProgram(program);
+        return studentList.stream().map(student -> {
+            StudentDTO studentDTO = mapper.fromStudent(student);
+            studentDTO.setPhoto(encodeImageToBase64(student.getPhoto()));
+            return studentDTO;
+        }).toList();
+    }
+    public List<StudentDTO> findByProgramV2(Program program){
         List<Student> studentList= studentRepository.findByProgram(program);
         return studentList.stream().map(student -> {
             StudentDTO studentDTO = mapper.fromStudent(student);
