@@ -26,7 +26,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentRestController {
     private PaymentService paymentService;
-    private StudentService studentService;
 
     @GetMapping("/payments")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
@@ -35,7 +34,7 @@ public class PaymentRestController {
     }
     @GetMapping("/payment/{id}")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public PaymentDTO findPayementBYid(@PathVariable Long id) throws PaymentNotFoundException {
+    public PaymentDTO findPaymentById(@PathVariable Long id) throws PaymentNotFoundException {
         return paymentService.getPayment(id);
     }
     @GetMapping("/student/{code}/payment")
@@ -52,7 +51,6 @@ public class PaymentRestController {
    // @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public PaymentDTO savePayment(@RequestParam("file") MultipartFile file, NewPaymentDTO newPaymentDTO
                                    ) throws IOException {
-        log.info("pyment reçu "+newPaymentDTO.toString());
         return paymentService.savePayment(file,newPaymentDTO);
     }
 

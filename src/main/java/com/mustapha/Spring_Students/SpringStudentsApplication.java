@@ -78,8 +78,8 @@ return args -> {
 				} catch (IOException | ProgramNotFoundException e) {
 					throw new RuntimeException(e);
 				}
-                moduleService.saveModule(ModuleDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).name("dev").teacherName("xxx").build());
-				moduleService.saveModule(ModuleDTO.builder().id(UUID.randomUUID().toString()).programDTO(programDTO).name("IA").teacherName("yyy").build());
+                moduleService.saveModule(NewModuleDTO.builder().programId(programDTO.getId()).name("dev").teacherName("xxx").build());
+				moduleService.saveModule(NewModuleDTO.builder().programId(programDTO.getId()).name("IA").teacherName("yyy").build());
 			} );
 
 			PaymentType [] paymentTypes = PaymentType.values();

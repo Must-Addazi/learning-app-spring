@@ -80,23 +80,11 @@ public class ProgramServiceImpl implements ProgramService{
 
         String posterFile = program.getPosterFile();
         if (posterFile != null) {
+            log.info("delete file");
             Path path = Paths.get(URI.create(posterFile));
             Files.deleteIfExists(path);
         }
-        List<ModuleDTO> cModules= moduleService.getModuleByProgramV2(program);
-        log.info("avant delete module");
-        for( ModuleDTO moduleDTO:cModules){
-            log.info("delete module");
-            moduleService.deleteModule(moduleDTO.getId());
-        }
-        List<StudentDTO> studentDTOS = studentService.findByProgramV2(program);
-        log.info("avant delete student");
-        for (StudentDTO studentDTO : studentDTOS) {
-            log.info("delete student");
-            studentService.deleteStudent(studentDTO.getId());
-        }
-        programRepository.deleteById(programId);
-
+       programRepository.deleteById(programId);
         return !programRepository.existsById(programId);
     }
 

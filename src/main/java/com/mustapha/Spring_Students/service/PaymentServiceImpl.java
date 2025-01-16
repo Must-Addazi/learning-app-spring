@@ -34,7 +34,6 @@ public class PaymentServiceImpl implements PaymentService {
     private Mapper mapper;
 
     public PaymentDTO savePayment(MultipartFile file, NewPaymentDTO newPaymentDTO) throws IOException {
-        log.info("pyment reçu "+newPaymentDTO.toString());
         Path path= Paths.get(System.getProperty("user.home"),"students-app-files","payments");
         if(!Files.exists(path)){
             Files.createDirectories(path);
