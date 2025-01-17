@@ -8,9 +8,6 @@ import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 public interface ProgramService {
@@ -23,4 +20,6 @@ public interface ProgramService {
     byte[] getPosterFile(String programId) throws IOException, ProgramNotFoundException;
 
     Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, StudentNotFoundException, PaymentNotFoundException;
+
+
 }

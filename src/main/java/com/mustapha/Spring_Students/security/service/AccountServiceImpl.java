@@ -23,7 +23,7 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public AppUser addNewUser(String username, String password, String confirmPassword) {
         AppUser appUser=appUserRepository.findByUsername(username);
-        if(appUser!=null) throw new RuntimeException("this user Already exist");
+      //if(appUser!=null) throw new RuntimeException("this user Already exist");
         if(!password.equals(confirmPassword)) throw new RuntimeException("password not match");
         appUser= AppUser.builder()
                 .username(username)
