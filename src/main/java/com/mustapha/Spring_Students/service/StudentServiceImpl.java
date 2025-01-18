@@ -214,12 +214,16 @@ public class StudentServiceImpl implements StudentService{
             return studentDTO;
         }).toList();
     }
-    public List<StudentDTO> findByProgramV2(Program program){
-        List<Student> studentList= studentRepository.findByProgram(program);
-        return studentList.stream().map(student -> {
-            StudentDTO studentDTO = mapper.fromStudent(student);
-            studentDTO.setPhoto(encodeImageToBase64(student.getPhoto()));
-            return studentDTO;
-        }).toList();
+    public byte[] getFile( String studentId, String file) throws IOException, StudentNotFoundException {
+        Student student= mapper.fromStudentDTO(getStudent(studentId));
+        String filePath;
+        if(Objects.equals(file, "bac")) {
+            filePath = student.getBacFile();
+        } else if (Objects.equals(file, "CIN")) {
+            filePath = student.getPhotoCIN();
+        }else{
+            filePath= student.getDiplomaFile();
+        }
+        return Files.readAllBytes(Path.of(URI.create(filePath)));
     }
 }

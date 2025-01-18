@@ -23,5 +23,6 @@ public interface StudentService {
     StudentDTO findByCIN(String code);
     StudentDTO findByEmail(String email);
     List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException;
-    List<StudentDTO> findByProgramV2(Program program);
+    byte[] getFile(String programId,String file) throws IOException, StudentNotFoundException;
+
 }

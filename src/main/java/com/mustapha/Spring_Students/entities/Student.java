@@ -34,11 +34,8 @@ public class Student {
     private String phone;
     @NotBlank
     private LocalDate birthDate;
-    @Column(columnDefinition = "DOUBLE CHECK (NoteBac >= 10 AND NoteBac <= 20)", nullable = false)
     private Double NoteBac;
-    @Column(columnDefinition = "DOUBLE CHECK (NoteDiploma >= 12 AND NoteDiploma <= 20)", nullable = false)
     private Double NoteDiploma;
-    @Column(columnDefinition = "DOUBLE CHECK (amountPaid > 0)", nullable = false)
     private double amountPaid;
     private Boolean Convene;
     private Boolean selected;

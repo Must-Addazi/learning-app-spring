@@ -5,7 +5,6 @@ import com.mustapha.Spring_Students.entities.ResponsibleProgram;
 import com.mustapha.Spring_Students.exceptions.ResponsibleProgramNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.ResponsibleProgramRepository;
-import com.mustapha.Spring_Students.security.entities.AppUser;
 import com.mustapha.Spring_Students.security.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,6 @@ import java.util.UUID;
 public class RespoProgramServiceImpl implements RespoProgramService{
     private Mapper mapper;
     private ResponsibleProgramRepository responsibleProgramRepository;
-    private AccountService accountService;
-    private EmailService emailService;
     @Override
     public ResponsibleProgramDTO getRespoProgram(String id) throws ResponsibleProgramNotFoundException {
 
@@ -32,11 +29,7 @@ public class RespoProgramServiceImpl implements RespoProgramService{
     public ResponsibleProgramDTO saveRespoProgram(ResponsibleProgramDTO responsibleProgramDTO) {
         responsibleProgramDTO.setId(UUID.randomUUID().toString());
         ResponsibleProgram responsibleProgram=mapper.fromResponsibleProgramDTO(responsibleProgramDTO);
-        AppUser appUser= accountService.addNewUser(responsibleProgramDTO.getEmail(),"12345","12345");
-        accountService.addRoleToUser(appUser.getUsername(),"USER");
-        accountService.addRoleToUser(appUser.getUsername(),"ADMIN");
-        emailService.sendEmail(responsibleProgramDTO.getEmail(),"Validation subscription","your password is 12345 and your username is "+responsibleProgramDTO.getEmail());
-        return mapper.fromResponsibleProgram(responsibleProgramRepository.save(responsibleProgram)) ;
+          return mapper.fromResponsibleProgram(responsibleProgramRepository.save(responsibleProgram)) ;
     }
 
     @Override

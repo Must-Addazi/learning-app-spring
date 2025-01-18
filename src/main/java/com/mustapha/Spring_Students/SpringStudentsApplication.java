@@ -25,19 +25,16 @@ public class SpringStudentsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringStudentsApplication.class, args);
 	}
-	//@Bean
+	@Bean
 	CommandLineRunner commandLineRunner(AccountService accountService){
 return args -> {
  accountService.addNewRole("USER");
  accountService.addNewRole("ADMIN");
- accountService.addNewUser("user1","12345","12345");
- accountService.addNewUser("user2","12345","12345");
- accountService.addNewUser("admin","12345","12345");
- accountService.addRoleToUser("user1","USER");
-	accountService.addRoleToUser("user2","USER");
-	accountService.addRoleToUser("admin","USER");
-	accountService.addRoleToUser("admin","ADMIN");
-
+ accountService.addNewRole("SUPER_ADMIN");
+ accountService.addNewUser("mustapha@gmail.com","12345","12345");
+	accountService.addRoleToUser("mustapha@gmail.com","USER");
+	accountService.addRoleToUser("mustapha@gmail.com","ADMIN");
+	accountService.addRoleToUser("mustapha@gmail.com","SUPER_ADMIN");
 };
 	}
 	//@Bean

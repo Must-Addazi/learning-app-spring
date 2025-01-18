@@ -23,22 +23,26 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public AppUser addNewUser(String username, String password, String confirmPassword) {
         AppUser appUser=appUserRepository.findByUsername(username);
-      //if(appUser!=null) throw new RuntimeException("this user Already exist");
-        if(!password.equals(confirmPassword)) throw new RuntimeException("password not match");
-        appUser= AppUser.builder()
-                .username(username)
-                .userId(UUID.randomUUID().toString())
-                .password(passwordEncoder.encode(password))
-                .build();
-        return appUserRepository.save(appUser);
+      if(appUser!=null) {
+          return appUser;
+      }else {
+          if (!password.equals(confirmPassword)) throw new RuntimeException("password not match");
+          appUser = AppUser.builder()
+                  .username(username)
+                  .userId(UUID.randomUUID().toString())
+                  .password(passwordEncoder.encode(password))
+                  .build();
+          return appUserRepository.save(appUser);
+      }
     }
 
     @Override
     public void addNewRole(String role) {
         AppRole appRole=appRoleRepository.findById(role).orElse(null);
-        if(appRole!=null) throw new RuntimeException("this role already exist");
-        appRole=AppRole.builder().role(role).build();
-        appRoleRepository.save(appRole);
+        if(appRole==null) {
+            appRole = AppRole.builder().role(role).build();
+            appRoleRepository.save(appRole);
+        }
     }
 
     @Override

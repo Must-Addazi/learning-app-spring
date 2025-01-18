@@ -17,6 +17,8 @@ public class StudentDTO {
     private String email;
     private String phone;
     private LocalDate birthDate;
+    private Boolean Convene;
+    private Boolean selected;
     private Double NoteBac;
     private Double NoteDiploma;
     private double amountPaid;
@@ -25,4 +27,5 @@ public class StudentDTO {
     private String bacFile;
     private String diplomaFile;
     private ProgramDTO programDTO;
+
 }

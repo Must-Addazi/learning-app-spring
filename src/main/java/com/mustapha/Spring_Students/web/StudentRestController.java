@@ -1,6 +1,7 @@
 package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
+import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
@@ -9,7 +10,7 @@ import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,5 +58,25 @@ public class StudentRestController {
     @DeleteMapping("/deleteStudent/{id}")
     public Boolean deleteStudent(@PathVariable String id) throws StudentNotFoundException, IOException, PaymentNotFoundException {
         return studentService.deleteStudent(id);
+    }
+    @GetMapping("/posterFile/{studentId}/{file}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String studentId, @PathVariable String file) {
+        try {
+            byte[] fileBytes = studentService.getFile(studentId,file);
+            StudentDTO studentDTO= studentService.getStudent(studentId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDisposition(ContentDisposition.builder("inline")
+                    .filename(studentDTO.getCIN()+file+ ".pdf").build());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileBytes);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (StudentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
