@@ -21,11 +21,7 @@ public class NewStudentDTO {
     private String email;
     private String phone;
     private LocalDate birthDate;
-    @Max(value=20, message = "La note de bac doit être inférieur à 20.")
-    @Min(value=10, message = "La note de bac doit être supérieur à 10 .")
     private Double NoteBac;
-    @Max(value=20, message = "La note de diplome doit être inférieur à 20.")
-    @Min(value=12, message = "La note de diplome doit être supérieur à 12 .")
     private Double NoteDiploma;
     private String programID;
 }

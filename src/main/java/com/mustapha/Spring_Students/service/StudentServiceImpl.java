@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -136,13 +137,6 @@ public class StudentServiceImpl implements StudentService{
         return mapper.fromStudent(savedStudent);
     }
 
-    private String getFileExtension(MultipartFile file) {
-        String filename = file.getOriginalFilename();
-        if (filename != null && filename.contains(".")) {
-            return filename.substring(filename.lastIndexOf("."));
-        }
-        return "";
-    }
 
     @Override
     public Boolean deleteStudent(String id) throws StudentNotFoundException, IOException, PaymentNotFoundException {
@@ -178,9 +172,19 @@ public class StudentServiceImpl implements StudentService{
         return !studentRepository.existsById(id);
     }
     @Override
-    public StudentDTO updateStudent(String id,StudentDTO studentDTO) {
-        Student student= mapper.fromStudentDTO(studentDTO);
-        student.setId(id);
+    public StudentDTO updateStudent(String id,NewStudentDTO newstudentDTO) throws StudentNotFoundException {
+        Student student= mapper.fromStudentDTO(getStudent(id));
+        student.setFirstName(newstudentDTO.getFirstName());
+        student.setLastName(newstudentDTO.getLastName());
+        student.setCIN(newstudentDTO.getCIN());
+        student.setBirthDate(newstudentDTO.getBirthDate());
+        accountService.updateUsername(newstudentDTO.getEmail());
+        student.setEmail(newstudentDTO.getEmail());
+        student.setNoteBac(newstudentDTO.getNoteBac());
+        student.setPhone(newstudentDTO.getPhone());
+        student.setNoteDiploma(newstudentDTO.getNoteDiploma());
+        Program program=programRepository.findById(newstudentDTO.getProgramID()).get();
+        student.setProgram(program);
         Student upStudent= studentRepository.save(student);
         return mapper.fromStudent(upStudent);
     }
@@ -225,5 +229,75 @@ public class StudentServiceImpl implements StudentService{
             filePath= student.getDiplomaFile();
         }
         return Files.readAllBytes(Path.of(URI.create(filePath)));
+    }
+
+    @Override
+    public StudentDTO updateFile(String id, MultipartFile file, String fileType) throws IOException, StudentNotFoundException {
+        Student student = mapper.fromStudentDTO(getStudent(id));
+
+        String baseDir = System.getProperty("user.home") + File.separator + "students-app-files";
+        Path filePath;
+
+        switch (fileType) {
+            case "CIN":
+                filePath = handleFileUpload(file, baseDir, "CINFiles", student.getFirstName() + student.getLastName() + student.getCIN(), ".pdf");
+                if (filePath != null) {
+                    student.setPhotoCIN(filePath.toUri().toString());
+                }
+                break;
+
+            case "Bac":
+                filePath = handleFileUpload(file, baseDir, "BacFiles", student.getFirstName() + student.getLastName() + student.getCIN() + "bac", ".pdf");
+                if (filePath != null) {
+                    student.setBacFile(filePath.toUri().toString());
+                }
+                break;
+
+            case "Diploma":
+                filePath = handleFileUpload(file, baseDir, "DiplomaFiles", student.getFirstName() + student.getLastName() + student.getCIN() + "diploma", ".pdf");
+                if (filePath != null) {
+                    student.setDiplomaFile(filePath.toUri().toString());
+                }
+                break;
+
+            case "Profile":
+                filePath = handleFileUpload(file, baseDir, "profileFiles", student.getFirstName() + student.getLastName() + student.getCIN(), getFileExtension(file));
+                if (filePath != null) {
+                    student.setPhoto(filePath.toUri().toString());
+                }
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid fileType: " + fileType);
+        }
+
+        Student savedStudent = studentRepository.save(student);
+       return mapper.fromStudent(savedStudent);
+    }
+
+    private Path handleFileUpload(MultipartFile file, String baseDir, String subFolder, String fileName, String extension) throws IOException {
+        if (file == null || file.isEmpty() || !Objects.requireNonNull(file.getOriginalFilename()).endsWith(extension)) {
+            return null;
+        }
+
+        Path dirPath = Paths.get(baseDir, subFolder);
+        if (!Files.exists(dirPath)) {
+            Files.createDirectories(dirPath);
+        }
+
+        Path filePath = dirPath.resolve(fileName + extension);
+
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        return filePath;
+    }
+
+
+    private String getFileExtension(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null) {
+            return "";
+        }
+        int dotIndex = originalFilename.lastIndexOf('.');
+        return (dotIndex != -1) ? originalFilename.substring(dotIndex) : "";
     }
 }

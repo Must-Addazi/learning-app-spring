@@ -1,11 +1,15 @@
 package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
+import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
+import com.mustapha.Spring_Students.enums.PaymentStatus;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
+import com.mustapha.Spring_Students.security.entities.AppUser;
+import com.mustapha.Spring_Students.security.service.AccountService;
 import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
@@ -23,6 +27,7 @@ import java.util.List;
 @AllArgsConstructor
 public class StudentRestController {
     private StudentService studentService;
+    private AccountService accountService;
     @GetMapping("/students")
   //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public List<StudentDTO> AllStudents(){
@@ -79,4 +84,27 @@ public class StudentRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    @PutMapping("/updateStudent/{studentId}")
+    //  @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public StudentDTO updateStudent(@PathVariable String studentId, @RequestBody NewStudentDTO studentDTO) throws StudentNotFoundException {
+        log.info("studentDTO" + studentDTO);
+        return studentService.updateStudent(studentId,studentDTO);
+    }
+    @PutMapping("/updateStudentFile/{studentId}/{fileType}")
+    public StudentDTO updateStudentFile(
+            @PathVariable String studentId,
+            @PathVariable String fileType,
+            @RequestParam("file") MultipartFile multipartFile
+    ) throws StudentNotFoundException, IOException {
+       return studentService.updateFile(studentId, multipartFile, fileType);
+    }
+    @PutMapping("/updateStudentPassword/{studentEmail}")
+    public AppUser updateStudentPassword(
+            @PathVariable String studentEmail,
+            @RequestBody String password,
+            @RequestBody String confirmPassword) {
+        log.info("ici email "+studentEmail+password);
+        return accountService.upadatePassword(studentEmail,password,confirmPassword);
+    }
+
 }

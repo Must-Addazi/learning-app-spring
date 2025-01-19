@@ -17,12 +17,12 @@ public interface StudentService {
     StudentDTO getStudent(String id) throws StudentNotFoundException;
     StudentDTO saveStudent(MultipartFile file,MultipartFile bacFile, MultipartFile diplomaFile ,MultipartFile profile , NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException;
     Boolean deleteStudent(String id) throws StudentNotFoundException, IOException, PaymentNotFoundException;
-    StudentDTO updateStudent(String id,StudentDTO studentDTO);
+    StudentDTO updateStudent(String id,NewStudentDTO studentDTO) throws StudentNotFoundException;
     List<StudentDTO> searchStudentByName(String name);
 
     StudentDTO findByCIN(String code);
     StudentDTO findByEmail(String email);
     List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException;
-    byte[] getFile(String programId,String file) throws IOException, StudentNotFoundException;
-
+    byte[] getFile(String id,String file) throws IOException, StudentNotFoundException;
+    StudentDTO updateFile(String id, MultipartFile file , String fileType) throws IOException, StudentNotFoundException;
 }

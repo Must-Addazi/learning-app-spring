@@ -9,4 +9,6 @@ public interface AccountService {
     void removeRoleFromUser(String username,String role);
     Boolean removeUser(String username);
     AppUser loadUserByUsername(String username);
+    AppUser updateUsername(String username);
+    AppUser upadatePassword(String username,String password , String confirmPassword);
 }

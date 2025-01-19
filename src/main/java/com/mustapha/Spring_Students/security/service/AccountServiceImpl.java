@@ -73,4 +73,19 @@ public class AccountServiceImpl implements AccountService{
     public AppUser loadUserByUsername(String username) {
         return appUserRepository.findByUsername(username);
     }
+
+    @Override
+    public AppUser updateUsername(String username) {
+        AppUser appUser= loadUserByUsername(username);
+        appUser.setUsername(username);
+        return appUserRepository.save(appUser);
+    }
+
+    @Override
+    public AppUser upadatePassword(String username,String password, String confirmPassword) {
+        AppUser appUser=appUserRepository.findByUsername(username);
+        if (!password.equals(confirmPassword)) throw new RuntimeException("password not match");
+        appUser.setPassword(passwordEncoder.encode(password));
+            return appUserRepository.save(appUser);
+        }
 }
