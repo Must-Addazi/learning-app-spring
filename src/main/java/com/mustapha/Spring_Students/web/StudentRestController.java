@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @CrossOrigin("*")
@@ -86,8 +87,14 @@ public class StudentRestController {
     }
     @PutMapping("/updateStudent/{studentId}")
     //  @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public StudentDTO updateStudent(@PathVariable String studentId, @RequestBody NewStudentDTO studentDTO) throws StudentNotFoundException {
-        log.info("studentDTO" + studentDTO);
+    public StudentDTO updateStudent(@PathVariable String studentId,
+                                    @RequestParam String CIN,
+                                    @RequestParam(required = false) Double NoteBac,
+                                    @RequestParam(required = false) Double NoteDiploma,
+                                    @RequestBody NewStudentDTO studentDTO) throws StudentNotFoundException {
+       studentDTO.setCIN(CIN);
+       studentDTO.setNoteBac(NoteBac);
+       studentDTO.setNoteDiploma(NoteDiploma);
         return studentService.updateStudent(studentId,studentDTO);
     }
     @PutMapping("/updateStudentFile/{studentId}/{fileType}")
@@ -101,9 +108,9 @@ public class StudentRestController {
     @PutMapping("/updateStudentPassword/{studentEmail}")
     public AppUser updateStudentPassword(
             @PathVariable String studentEmail,
-            @RequestBody String password,
-            @RequestBody String confirmPassword) {
-        log.info("ici email "+studentEmail+password);
+            @RequestBody Map<String, String> payload) {
+        String password = payload.get("password");
+        String confirmPassword = payload.get("confirmPassword");
         return accountService.upadatePassword(studentEmail,password,confirmPassword);
     }
 

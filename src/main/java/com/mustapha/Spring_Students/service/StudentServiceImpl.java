@@ -186,6 +186,7 @@ public class StudentServiceImpl implements StudentService{
         Program program=programRepository.findById(newstudentDTO.getProgramID()).get();
         student.setProgram(program);
         Student upStudent= studentRepository.save(student);
+        log.info("student DTO "+newstudentDTO.toString() );
         return mapper.fromStudent(upStudent);
     }
 
