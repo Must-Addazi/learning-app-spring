@@ -25,4 +25,5 @@ public interface StudentService {
     List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException;
     byte[] getFile(String id,String file) throws IOException, StudentNotFoundException;
     StudentDTO updateFile(String id, MultipartFile file , String fileType) throws IOException, StudentNotFoundException;
+    StudentDTO conveneStudent(String studentId);
 }

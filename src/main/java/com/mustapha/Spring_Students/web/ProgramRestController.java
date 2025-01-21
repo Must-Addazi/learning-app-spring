@@ -1,5 +1,6 @@
 package com.mustapha.Spring_Students.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mustapha.Spring_Students.dtos.*;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
@@ -13,6 +14,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.DataInput;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class ProgramRestController {
     public List<ProgramDTO> programDTOList(){
         return programService.getPrograms();
     }
-    @GetMapping("/program/{id}")
+    @GetMapping("/programById/{id}")
     public ProgramDTO programDTO( @PathVariable(name = "id") String id) throws ProgramNotFoundException {
         return programService.getProgram(id);
     }
@@ -39,10 +41,10 @@ public class ProgramRestController {
                 .responsibleProgramDTO(responsibleProgramDTO).build();
         return programService.saveProgram(file,programDTO);
     }
-    @GetMapping("/posterFile/{programId}")
-    public ResponseEntity<byte[]> getPosterFile(@PathVariable String programId) {
+    @GetMapping("/getFile/{programId}/{file}")
+    public ResponseEntity<byte[]> getFile(@PathVariable String programId, @PathVariable String file) {
         try {
-            byte[] fileBytes = programService.getPosterFile(programId);
+            byte[] fileBytes = programService.getFile(programId,file);
             ProgramDTO programDTO= programService.getProgram(programId);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
@@ -64,4 +66,35 @@ public class ProgramRestController {
         log.info("programID "+id);
         return programService.deleteProgram(id);
     }
+    @PutMapping("/updateProgram")
+    public ProgramDTO updateProgram(
+            @RequestParam(value = "posterFile", required = false) MultipartFile posterFile,
+           @RequestParam(value = "timingFile", required = false) MultipartFile timingFile,
+            @RequestParam(value = "id") String id,
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "price") Double price,
+            @RequestParam(value = "posterFileName") String posterFileName,
+            @RequestParam(value = "timingFileName") String timingFileName,
+            @RequestParam(value = "responsibleProgramDTO.id") String responsibleId,
+            @RequestParam(value = "responsibleProgramDTO.name") String responsibleName,
+            @RequestParam(value = "responsibleProgramDTO.phoneNumber") String responsiblePhoneNumber,
+            @RequestParam(value = "responsibleProgramDTO.email") String responsibleEmail
+    ) throws IOException, ProgramNotFoundException {
+        ProgramDTO programDTO = new ProgramDTO();
+        programDTO.setId(id);
+        programDTO.setName(name);
+        programDTO.setPrice(price);
+        programDTO.setPosterFile(posterFileName);
+        programDTO.setTiming(timingFileName);
+
+        ResponsibleProgramDTO responsibleProgramDTO = new ResponsibleProgramDTO();
+        responsibleProgramDTO.setId(responsibleId);
+        responsibleProgramDTO.setName(responsibleName);
+        responsibleProgramDTO.setPhoneNumber(responsiblePhoneNumber);
+        responsibleProgramDTO.setEmail(responsibleEmail);
+
+        programDTO.setResponsibleProgramDTO(responsibleProgramDTO);
+        return programService.updateProgram(programDTO, posterFile, timingFile);
+    }
+
 }

@@ -113,5 +113,9 @@ public class StudentRestController {
         String confirmPassword = payload.get("confirmPassword");
         return accountService.upadatePassword(studentEmail,password,confirmPassword);
     }
+    @PutMapping("/conveneStudent/{studentId}")
+    public StudentDTO conveneStudent(@PathVariable(value = "studentId") String id){
+        return studentService.conveneStudent(id);
+    }
 
 }

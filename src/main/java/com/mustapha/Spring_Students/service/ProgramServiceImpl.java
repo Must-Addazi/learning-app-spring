@@ -1,7 +1,9 @@
 package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.ProgramDTO;
+import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.entities.Program;
+import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
@@ -15,13 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -88,9 +93,13 @@ public class ProgramServiceImpl implements ProgramService{
         List<Program> programList= programRepository.findAll();
         return programList.stream().map(program -> mapper.fromProgram(program)).toList();
     }
-    public byte[] getPosterFile( String programId) throws IOException, ProgramNotFoundException {
+    public byte[] getFile( String programId,String file) throws IOException, ProgramNotFoundException {
         Program program = mapper.fromProgramDTO(getProgram(programId));
-        String filePath=program.getPosterFile();
+        String filePath = "";
+        if(file.contains("poster"))
+            filePath  =program.getPosterFile();
+        else if (file.contains("timing"))
+            filePath =program.getTiming();
         return Files.readAllBytes(Path.of(URI.create(filePath)));
     }
 
@@ -113,5 +122,53 @@ public class ProgramServiceImpl implements ProgramService{
        programRepository.deleteById(programId);
         return !programRepository.existsById(programId);
     }
+
+    @Override
+    public ProgramDTO updateProgram(ProgramDTO programDTO, MultipartFile poster, MultipartFile timing) throws  IOException {
+        respoProgramService.updateRespo(programDTO.getResponsibleProgramDTO().getId(), programDTO.getResponsibleProgramDTO());
+        Program program = mapper.fromProgramDTO(programDTO);
+
+        if (poster != null) {
+            updateFile(program, poster, "poster");
+        }
+        if (timing != null) {
+            updateFile(program, timing, "timing");
+        }
+
+        return mapper.fromProgram(programRepository.save(program));
+    }
+
+    public void updateFile(Program program, MultipartFile file, String fileType) throws IOException {
+        String baseDir = System.getProperty("user.home") + File.separator + "students-app-files";
+        Path filePath = handleFileUpload(file, baseDir, fileType.equals("poster") ? "posterFiles" : "BacFiles",
+                program.getName() + program.getId() + fileType, ".pdf");
+
+        if (fileType.equals("poster")) {
+            program.setPosterFile(filePath.toUri().toString());
+        } else if (fileType.equals("timing")) {
+            program.setTiming(filePath.toUri().toString());
+        }
+    }
+
+    private Path handleFileUpload(MultipartFile file, String baseDir, String subFolder, String fileName, String extension) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new IOException("File is empty.");
+        }
+
+        String mimeType = file.getContentType();
+        if (!"application/pdf".equals(mimeType)) {
+            throw new IOException("Only PDF files are allowed.");
+        }
+
+        Path dirPath = Paths.get(baseDir, subFolder);
+        if (!Files.exists(dirPath)) {
+            Files.createDirectories(dirPath);
+        }
+
+        Path filePath = dirPath.resolve(fileName + extension);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        return filePath;
+    }
+
 
 }

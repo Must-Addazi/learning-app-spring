@@ -3,7 +3,6 @@ package com.mustapha.Spring_Students.service;
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
-import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.entities.Program;
 import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
@@ -28,10 +27,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static org.springframework.util.ClassUtils.isPresent;
 
 @Slf4j
 @AllArgsConstructor
@@ -130,14 +132,23 @@ public class StudentServiceImpl implements StudentService{
         student.setConvene(false);
         student.setSelected(false);
         Student savedStudent = studentRepository.save(student);
-        AppUser appUser= accountService.addNewUser(studentDTO.getEmail(),"12345","12345");
+        String randomPassword = generateRandomPassword();
+        AppUser appUser= accountService.addNewUser(studentDTO.getEmail(),randomPassword,randomPassword);
         accountService.addRoleToUser(appUser.getUsername(),"USER");
-        emailService.sendEmail(studentDTO.getEmail(),"Validation subscription","your password is 12345 and your username is "+studentDTO.getEmail());
-        emailService.sendEmail(studentDTO.getProgramDTO().getResponsibleProgramDTO().getEmail(),"Nouveau inscription","Nous vous informaons qu'un nouveau etudiant avec CIN "+studentDTO.getCIN()+" a été inscrit merci de consulter votre platforme");
+        emailService.sendEmail(studentDTO.getEmail(), "Subscription Validation", "Your password is "+randomPassword+" and your username is " + studentDTO.getEmail());
+        emailService.sendEmail(studentDTO.getProgramDTO().getResponsibleProgramDTO().getEmail(), "New Enrollment", "We inform you that a new student with CIN " + studentDTO.getCIN() + " has been enrolled. Please check your platform.");
         return mapper.fromStudent(savedStudent);
     }
 
-
+    private String generateRandomPassword() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+        StringBuilder password = new StringBuilder();
+        SecureRandom random = new SecureRandom();
+        for (int i = 0; i < 10; i++) {
+            password.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return password.toString();
+    }
     @Override
     public Boolean deleteStudent(String id) throws StudentNotFoundException, IOException, PaymentNotFoundException {
         StudentDTO studentDTO= getStudent(id);
@@ -274,6 +285,16 @@ public class StudentServiceImpl implements StudentService{
 
         Student savedStudent = studentRepository.save(student);
        return mapper.fromStudent(savedStudent);
+    }
+
+    @Override
+    public StudentDTO conveneStudent(String studentId) {
+        Student student=studentRepository.findById(studentId).get();
+        if(student.getConvene()!= null)
+        student.setConvene(!student.getConvene());
+        else
+            student.setConvene(true);
+        return mapper.fromStudent(student);
     }
 
     private Path handleFileUpload(MultipartFile file, String baseDir, String subFolder, String fileName, String extension) throws IOException {

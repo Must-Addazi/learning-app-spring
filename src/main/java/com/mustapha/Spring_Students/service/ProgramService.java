@@ -17,9 +17,11 @@ public interface ProgramService {
 
     List<ProgramDTO> getPrograms();
 
-    byte[] getPosterFile(String programId) throws IOException, ProgramNotFoundException;
+    byte[] getFile(String programId,String file) throws IOException, ProgramNotFoundException;
 
     Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, StudentNotFoundException, PaymentNotFoundException;
+
+    ProgramDTO updateProgram(ProgramDTO programDTO, MultipartFile poster, MultipartFile timing) throws  IOException, ProgramNotFoundException;
 
 
 }
