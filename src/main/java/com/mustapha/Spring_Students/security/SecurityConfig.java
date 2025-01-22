@@ -41,7 +41,8 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig{
-    @Value("${jwt.secret}")
+ //   @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String secretKey;
     @Autowired
     @Lazy

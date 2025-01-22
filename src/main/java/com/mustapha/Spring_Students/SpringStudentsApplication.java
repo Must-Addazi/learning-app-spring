@@ -5,10 +5,14 @@ import com.mustapha.Spring_Students.enums.PaymentType;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.security.service.AccountService;
 import com.mustapha.Spring_Students.service.*;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +21,27 @@ import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
 
-@Transactional
 @SpringBootApplication
 @EnableAsync
+@Configuration
 public class SpringStudentsApplication {
 
 	public static void main(String[] args) {
+		Dotenv dotenv = Dotenv.load(); // charge des variables d'envirenement
+		System.out.println("DATABASE_URL: " + dotenv.get("DATABASE_URL"));
+		System.out.println("DATABASE_USERNAME: " + dotenv.get("DATABASE_USERNAME"));
+		System.out.println("DATABASE_PASSWORD: " + dotenv.get("DATABASE_PASSWORD"));
 		SpringApplication.run(SpringStudentsApplication.class, args);
 	}
+
+
+		@Bean
+		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+			PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+			configurer.setLocation(new FileSystemResource(".env"));
+			return configurer;
+		}
+
 	@Bean
 	CommandLineRunner commandLineRunner(AccountService accountService){
 return args -> {
