@@ -23,7 +23,10 @@ public interface StudentService {
     StudentDTO findByCIN(String code);
     StudentDTO findByEmail(String email);
     List<StudentDTO> findByProgram(String programId) throws ProgramNotFoundException;
+    List<StudentDTO> findByProgramAndConvene(String programId) throws ProgramNotFoundException;
     byte[] getFile(String id,String file) throws IOException, StudentNotFoundException;
     StudentDTO updateFile(String id, MultipartFile file , String fileType) throws IOException, StudentNotFoundException;
     StudentDTO conveneStudent(String studentId);
+    List<StudentDTO> conveneStudentList();
+    StudentDTO selectStudent(String studentId);
 }

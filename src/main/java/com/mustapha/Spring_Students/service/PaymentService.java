@@ -2,7 +2,6 @@ package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
-import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.enums.PaymentStatus;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import org.springframework.web.multipart.MultipartFile;

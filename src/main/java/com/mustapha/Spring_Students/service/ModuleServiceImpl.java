@@ -48,9 +48,8 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
     @Override
-    public ModuleDTO updateModule(String id, ModuleDTO moduleDTO) {
+    public ModuleDTO updateModule(ModuleDTO moduleDTO) {
         CModule module = mapper.fromModuleDTO(moduleDTO);
-        module.setId(id);
         CModule cModule = moduleRepository.save(module);
         return mapper.fromModule(cModule);
     }

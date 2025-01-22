@@ -1,6 +1,5 @@
 package com.mustapha.Spring_Students.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mustapha.Spring_Students.dtos.*;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
@@ -11,10 +10,10 @@ import com.mustapha.Spring_Students.service.RespoProgramService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.DataInput;
 import java.io.IOException;
 import java.util.List;
 
@@ -34,7 +33,8 @@ public class ProgramRestController {
         return programService.getProgram(id);
     }
     @PostMapping(value = "/saveProgram", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ProgramDTO saveStudentDTO(@RequestParam("poster") MultipartFile file, NewProgram newProgram) throws IOException, ResponsibleProgramNotFoundException {
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")
+    public ProgramDTO saveProgram(@RequestParam("poster") MultipartFile file, NewProgram newProgram) throws IOException, ResponsibleProgramNotFoundException {
         ResponsibleProgramDTO responsibleProgramDTO = respoProgramService.getRespoProgram(newProgram.getRespId());
         ProgramDTO programDTO= ProgramDTO.builder().price(newProgram.getPrice())
                 .name(newProgram.getName())
@@ -62,11 +62,13 @@ public class ProgramRestController {
         }
     }
     @DeleteMapping("/deleteProgram/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")
     public Boolean deleteProgram(@PathVariable String id) throws StudentNotFoundException, IOException, PaymentNotFoundException, ProgramNotFoundException {
         log.info("programID "+id);
         return programService.deleteProgram(id);
     }
     @PutMapping("/updateProgram")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ProgramDTO updateProgram(
             @RequestParam(value = "posterFile", required = false) MultipartFile posterFile,
            @RequestParam(value = "timingFile", required = false) MultipartFile timingFile,

@@ -15,7 +15,7 @@ public interface ModuleService {
     List<ModuleDTO> getModuleList();
     ModuleDTO getModule(String id) throws ModuleNotFoundException;
     ModuleDTO saveModule(NewModuleDTO moduleDTO);
-    ModuleDTO updateModule(String id,ModuleDTO moduleDTO);
+    ModuleDTO updateModule(ModuleDTO moduleDTO);
     Boolean deleteModule(String id);
     List<ModuleDTO> getModuleByProgram(String programId) throws ProgramNotFoundException;
 

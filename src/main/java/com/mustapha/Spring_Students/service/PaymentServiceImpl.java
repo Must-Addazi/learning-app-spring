@@ -2,7 +2,6 @@ package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
-import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.entities.Payment;
 import com.mustapha.Spring_Students.entities.Student;
 import com.mustapha.Spring_Students.enums.PaymentStatus;

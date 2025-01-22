@@ -4,10 +4,11 @@ import com.mustapha.Spring_Students.dtos.ResponsibleProgramDTO;
 import com.mustapha.Spring_Students.exceptions.ResponsibleProgramNotFoundException;
 import com.mustapha.Spring_Students.service.RespoProgramService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @AllArgsConstructor
 @RestController
@@ -23,6 +24,7 @@ public class RespoProgramRestController {
         return respoProgramService.getRespoProgram(id);
     }
     @PostMapping("/saveRespo")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")
     public String saveResponsibleProgram(ResponsibleProgramDTO responsibleProgramDTO){
         return respoProgramService.saveRespoProgram(responsibleProgramDTO).getId();
     }

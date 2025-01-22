@@ -8,6 +8,7 @@ import com.mustapha.Spring_Students.service.ModuleService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class ModuleRestController {
         return moduleService.getModuleList();
     }
     @PostMapping("/saveModule")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ModuleDTO saveModule(@ModelAttribute NewModuleDTO newModuleDTO){
         return moduleService.saveModule(newModuleDTO);
     }
@@ -35,7 +37,13 @@ public class ModuleRestController {
         return moduleService.getModuleByProgram(id);
     }
     @DeleteMapping("/deleteModule/{id}")
-    public boolean deletePayment(@PathVariable String id) {
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public boolean deleteModule(@PathVariable String id) {
         return moduleService.deleteModule(id);
+    }
+    @PutMapping("updateModule")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ModuleDTO updateModule(@RequestBody ModuleDTO moduleDTO){
+        return moduleService.updateModule(moduleDTO);
     }
 }

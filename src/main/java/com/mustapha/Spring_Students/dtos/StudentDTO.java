@@ -17,7 +17,7 @@ public class StudentDTO {
     private String email;
     private String phone;
     private LocalDate birthDate;
-    private Boolean Convene;
+    private Boolean convene;
     private Boolean selected;
     private Double NoteBac;
     private Double NoteDiploma;

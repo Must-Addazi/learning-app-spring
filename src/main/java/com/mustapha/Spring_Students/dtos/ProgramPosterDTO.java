@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class ProgramPosterDTO {
     private Long id;
     private String url;
+    private ProgramDTO program;
 }

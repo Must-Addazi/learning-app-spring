@@ -19,6 +19,7 @@ import java.util.UUID;
 public class RespoProgramServiceImpl implements RespoProgramService{
     private Mapper mapper;
     private ResponsibleProgramRepository responsibleProgramRepository;
+    private AccountService accountService;
     @Override
     public ResponsibleProgramDTO getRespoProgram(String id) throws ResponsibleProgramNotFoundException {
 
@@ -46,6 +47,7 @@ public class RespoProgramServiceImpl implements RespoProgramService{
     @Override
     public ResponsibleProgramDTO updateRespo(String id, ResponsibleProgramDTO responsibleProgramDTO) {
         ResponsibleProgram responsibleProgram=mapper.fromResponsibleProgramDTO(responsibleProgramDTO);
+        accountService.updateUsername(responsibleProgram.getEmail());
         responsibleProgram.setId(responsibleProgram.getId());
         return mapper.fromResponsibleProgram(responsibleProgramRepository.save(responsibleProgram));
     }

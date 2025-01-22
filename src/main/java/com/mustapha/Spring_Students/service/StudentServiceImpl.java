@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.springframework.util.ClassUtils.isPresent;
 
 @Slf4j
 @AllArgsConstructor
@@ -230,18 +229,35 @@ public class StudentServiceImpl implements StudentService{
             return studentDTO;
         }).toList();
     }
-    public byte[] getFile( String studentId, String file) throws IOException, StudentNotFoundException {
-        Student student= mapper.fromStudentDTO(getStudent(studentId));
+
+    @Override
+    public List<StudentDTO> findByProgramAndConvene(String programId) throws ProgramNotFoundException {
+        Program program = programRepository.findById(programId).orElseThrow(()-> new ProgramNotFoundException("program not found"));
+        List<Student> studentList= studentRepository.findByProgramAndConveneTrue(program);
+        return studentList.stream().map(student -> {
+            StudentDTO studentDTO = mapper.fromStudent(student);
+            studentDTO.setPhoto(encodeImageToBase64(student.getPhoto()));
+            return studentDTO;
+        }).toList();
+    }
+    public byte[] getFile(String studentId, String file) throws IOException, StudentNotFoundException {
+        Student student = mapper.fromStudentDTO(getStudent(studentId));
         String filePath;
-        if(Objects.equals(file, "bac")) {
+        if (Objects.equals(file, "bac")) {
             filePath = student.getBacFile();
         } else if (Objects.equals(file, "CIN")) {
             filePath = student.getPhotoCIN();
-        }else{
-            filePath= student.getDiplomaFile();
+        } else {
+            filePath = student.getDiplomaFile();
         }
+
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IllegalArgumentException("no file" + studentId);
+        }
+
         return Files.readAllBytes(Path.of(URI.create(filePath)));
     }
+
 
     @Override
     public StudentDTO updateFile(String id, MultipartFile file, String fileType) throws IOException, StudentNotFoundException {
@@ -297,6 +313,26 @@ public class StudentServiceImpl implements StudentService{
         return mapper.fromStudent(student);
     }
 
+    @Override
+    public List<StudentDTO> conveneStudentList() {
+        List<Student> studentList = studentRepository.findByConveneTrue();
+        return studentList.stream().map(student -> {
+            StudentDTO studentDTO = mapper.fromStudent(student);
+            studentDTO.setPhoto(encodeImageToBase64(student.getPhoto()));
+            return studentDTO;
+        }).toList();
+    }
+
+    @Override
+    public StudentDTO selectStudent(String studentId) {
+        Student student=studentRepository.findById(studentId).get();
+        if(student.getSelected()!= null)
+            student.setSelected(!student.getSelected());
+        else
+            student.setSelected(true);
+        return mapper.fromStudent(student);
+    }
+
     private Path handleFileUpload(MultipartFile file, String baseDir, String subFolder, String fileName, String extension) throws IOException {
         if (file == null || file.isEmpty() || !Objects.requireNonNull(file.getOriginalFilename()).endsWith(extension)) {
             return null;
@@ -312,7 +348,6 @@ public class StudentServiceImpl implements StudentService{
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         return filePath;
     }
-
 
     private String getFileExtension(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();

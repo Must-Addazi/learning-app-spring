@@ -28,43 +28,39 @@ public class PaymentRestController {
     private PaymentService paymentService;
 
     @GetMapping("/payments")
-  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public List<PaymentDTO> AllPayments(){
        return paymentService.getPaymentList();
     }
     @GetMapping("/payment/{id}")
-  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public PaymentDTO findPaymentById(@PathVariable Long id) throws PaymentNotFoundException {
         return paymentService.getPayment(id);
     }
     @GetMapping("/student/{code}/payment")
-   // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public List<PaymentDTO> findPaymentByStudentCode(@PathVariable String code){
         return paymentService.getPaymentByCNE(code);
     }
     @GetMapping("/payment/{email}/student")
-    // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public List<PaymentDTO> findPaymentByStudentEmail(@PathVariable String email){
         return paymentService.getPaymentByEmail(email);
     }
     @PostMapping(value = "/payment",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   // @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public PaymentDTO savePayment(@RequestParam("file") MultipartFile file, NewPaymentDTO newPaymentDTO
                                    ) throws IOException {
         return paymentService.savePayment(file,newPaymentDTO);
     }
 
-   // @GetMapping(value = "/paymentFile/{paymentId}",produces = MediaType.APPLICATION_PDF_VALUE)
- //   @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-  /*  public byte[] getPaymentFile(@PathVariable Long paymentId) throws IOException,PaymentNotFoundException {
-     return paymentService.getPaymentFile(paymentId);
-    }*/
     @PutMapping("/payments/updateStatus/{paymentID}")
-  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public PaymentDTO updatePaymentStatus(@PathVariable Long paymentID, @RequestParam PaymentStatus status) throws PaymentNotFoundException {
        return paymentService.updatePaymentStatus(paymentID,status);
     }
     @GetMapping("/paymentFile/{paymentId}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public ResponseEntity<byte[]> getPaymentFile(@PathVariable Long paymentId) {
         try {
             byte[] fileBytes = paymentService.getPaymentFile(paymentId);
@@ -85,6 +81,7 @@ public class PaymentRestController {
         }
     }
     @DeleteMapping("/deletePayment/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public boolean deletePayment(@PathVariable Long id) throws PaymentNotFoundException, IOException {
         return paymentService.deletePayment(id);
     }

@@ -1,10 +1,7 @@
 package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.NewStudentDTO;
-import com.mustapha.Spring_Students.dtos.PaymentDTO;
-import com.mustapha.Spring_Students.dtos.ProgramDTO;
 import com.mustapha.Spring_Students.dtos.StudentDTO;
-import com.mustapha.Spring_Students.enums.PaymentStatus;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
 import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
@@ -12,13 +9,16 @@ import com.mustapha.Spring_Students.security.entities.AppUser;
 import com.mustapha.Spring_Students.security.service.AccountService;
 import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -30,29 +30,43 @@ public class StudentRestController {
     private StudentService studentService;
     private AccountService accountService;
     @GetMapping("/students")
-  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
-    public List<StudentDTO> AllStudents(){
+   @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")
+    public List<StudentDTO> AllStudents(Authentication authentication){
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        System.out.println("Authorities de l'utilisateur authentifié :");
+        authorities.forEach(authority -> System.out.println(authority.getAuthority()));
         return studentService.getStudentList();
     }
+    @GetMapping("/conveneStudentList")
+     @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")
+    public List<StudentDTO> conveneStudentList(){
+        return studentService.conveneStudentList();
+    }
     @GetMapping("/student/{id}")
-   // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public StudentDTO findStudentById( @PathVariable String id) throws StudentNotFoundException {
         return studentService.getStudent(id);
     }
     @GetMapping("/studentCNE/{code}")
-   // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public StudentDTO findStudentByCNE(@PathVariable String code){
         return studentService.findByCIN(code);
     }
     @GetMapping("/studentEmail/{email}")
-    // @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public StudentDTO findStudentByEmail(@PathVariable String email){
         return studentService.findByEmail(email);
     }
     @GetMapping("/studentDTO/{programID}")
-  //  @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public List<StudentDTO> findStudentByProgram(@PathVariable(name ="programID" ) String program) throws ProgramNotFoundException {
         return studentService.findByProgram(program);
+    }
+    @GetMapping("/findByProgramAndConvene/{programID}")
+      @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public List<StudentDTO> findByProgramAndConvene(@PathVariable(name ="programID" ) String program) throws ProgramNotFoundException {
+        return studentService.findByProgramAndConvene(program);
     }
     @PostMapping(value = "/saveStudent", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public StudentDTO saveStudentDTO(@RequestParam("photoCIN") MultipartFile CinFile,
@@ -62,6 +76,7 @@ public class StudentRestController {
       return studentService.saveStudent(CinFile,bacFile,diplomaFile,profile,newStudentDTO);
     }
     @DeleteMapping("/deleteStudent/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public Boolean deleteStudent(@PathVariable String id) throws StudentNotFoundException, IOException, PaymentNotFoundException {
         return studentService.deleteStudent(id);
     }
@@ -74,11 +89,9 @@ public class StudentRestController {
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDisposition(ContentDisposition.builder("inline")
                     .filename(studentDTO.getCIN()+file+ ".pdf").build());
-
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(fileBytes);
-
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (StudentNotFoundException e) {
@@ -86,7 +99,7 @@ public class StudentRestController {
         }
     }
     @PutMapping("/updateStudent/{studentId}")
-    //  @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public StudentDTO updateStudent(@PathVariable String studentId,
                                     @RequestParam String CIN,
                                     @RequestParam(required = false) Double NoteBac,
@@ -98,6 +111,7 @@ public class StudentRestController {
         return studentService.updateStudent(studentId,studentDTO);
     }
     @PutMapping("/updateStudentFile/{studentId}/{fileType}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public StudentDTO updateStudentFile(
             @PathVariable String studentId,
             @PathVariable String fileType,
@@ -106,6 +120,7 @@ public class StudentRestController {
        return studentService.updateFile(studentId, multipartFile, fileType);
     }
     @PutMapping("/updateStudentPassword/{studentEmail}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public AppUser updateStudentPassword(
             @PathVariable String studentEmail,
             @RequestBody Map<String, String> payload) {
@@ -114,8 +129,14 @@ public class StudentRestController {
         return accountService.upadatePassword(studentEmail,password,confirmPassword);
     }
     @PutMapping("/conveneStudent/{studentId}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public StudentDTO conveneStudent(@PathVariable(value = "studentId") String id){
         return studentService.conveneStudent(id);
+    }
+    @PutMapping("/selectStudent/{studentId}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public StudentDTO selectStudent(@PathVariable(value = "studentId") String id){
+        return studentService.selectStudent(id);
     }
 
 }

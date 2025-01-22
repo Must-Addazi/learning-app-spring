@@ -37,7 +37,7 @@ public class Student {
     private Double NoteBac;
     private Double NoteDiploma;
     private double amountPaid;
-    private Boolean Convene;
+    private Boolean convene;
     private Boolean selected;
     private String photoCIN;
     private String photo;
