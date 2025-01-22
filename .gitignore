@@ -32,4 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 # Ignorer les fichiers de configuration sensibles
-/src/main/resources/application.properties
+.env
