@@ -37,7 +37,6 @@ public class PaymentServiceImpl implements PaymentService {
         if(!Files.exists(path)){
             Files.createDirectories(path);
         }
-        log.info("email is "+newPaymentDTO.getEmail());
         Student student=studentRepository.findByEmail(newPaymentDTO.getEmail());
         PaymentDTO paymentDTO=mapper.fromNewpaymentDTO(newPaymentDTO);
         paymentDTO.setStudentDTO(mapper.fromStudent(student));
