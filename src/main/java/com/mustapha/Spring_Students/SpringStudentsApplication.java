@@ -27,20 +27,19 @@ import java.util.UUID;
 public class SpringStudentsApplication {
 
 	public static void main(String[] args) {
-		Dotenv dotenv = Dotenv.load(); // charge des variables d'envirenement
-		System.out.println("DATABASE_URL: " + dotenv.get("DATABASE_URL"));
-		System.out.println("DATABASE_USERNAME: " + dotenv.get("DATABASE_USERNAME"));
-		System.out.println("DATABASE_PASSWORD: " + dotenv.get("DATABASE_PASSWORD"));
+	//	Dotenv dotenv = Dotenv.load(); // charge des variables d'envirenement
+   //		System.out.println("DATABASE_URL: " + dotenv.get("DATABASE_URL"));
+	//	System.out.println("DATABASE_USERNAME: " + dotenv.get("DATABASE_USERNAME"));
+	//	System.out.println("DATABASE_PASSWORD: " + dotenv.get("DATABASE_PASSWORD"));
 		SpringApplication.run(SpringStudentsApplication.class, args);
 	}
 
-
-		@Bean
+		/*@Bean
 		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 			PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
 			configurer.setLocation(new FileSystemResource(".env"));
 			return configurer;
-		}
+		}*/
 
 	@Bean
 	CommandLineRunner commandLineRunner(AccountService accountService){
