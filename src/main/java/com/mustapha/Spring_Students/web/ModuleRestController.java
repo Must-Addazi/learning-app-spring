@@ -9,8 +9,11 @@ import com.mustapha.Spring_Students.service.ModuleService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +28,11 @@ public class ModuleRestController {
     }
     @PostMapping("/saveModule")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ModuleDTO saveModule(@ModelAttribute NewModuleDTO newModuleDTO){
+    public ModuleDTO saveModule(@ModelAttribute NewModuleDTO newModuleDTO , Authentication authentication){
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        System.out.println("Authorities de l'utilisateur authentifié :");
+        authorities.forEach(authority -> System.out.println(authority.getAuthority()));
         return moduleService.saveModule(newModuleDTO);
     }
     @GetMapping("module/{id}")

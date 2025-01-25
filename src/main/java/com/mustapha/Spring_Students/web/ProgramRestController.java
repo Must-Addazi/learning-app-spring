@@ -11,10 +11,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -31,6 +34,15 @@ public class ProgramRestController {
     @GetMapping("/programById/{id}")
     public ProgramDTO programDTO( @PathVariable(name = "id") String id) throws ProgramNotFoundException {
         return programService.getProgram(id);
+    }
+    @GetMapping("/programByRespo/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ProgramDTO programByRespo(@PathVariable(name = "id") String id, Authentication authentication) throws ProgramNotFoundException, ResponsibleProgramNotFoundException {
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        System.out.println("Authorities de l'utilisateur authentifié :");
+        authorities.forEach(authority -> System.out.println(authority.getAuthority()));
+        return programService.getProgramByRespo(id);
     }
     @PostMapping(value = "/saveProgram", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")

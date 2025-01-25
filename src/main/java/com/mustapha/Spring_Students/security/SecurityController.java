@@ -1,6 +1,9 @@
 package com.mustapha.Spring_Students.security;
 
+import com.mustapha.Spring_Students.security.entities.ResetPasswordRequest;
+import com.mustapha.Spring_Students.security.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,10 +13,7 @@ import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -27,6 +27,8 @@ public class SecurityController {
     public AuthenticationManager authenticationManager;
     @Autowired
     public JwtEncoder jwtEncoder;
+    @Autowired
+    private AccountService accountService;
     @GetMapping("/profile")
     public Authentication authentication( Authentication authentication ){
         return authentication;
@@ -48,4 +50,19 @@ public class SecurityController {
         String jwt =jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
         return Map.of("access-token",jwt);
     }
+
+
+
+        @PostMapping("/forgot-password")
+        public Boolean forgotPassword(@RequestBody Map<String, String> request) {
+            String email = request.get("email");
+           return accountService.generatePasswordResetToken(email);
+        }
+
+        @PostMapping("/reset-password")
+        public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetRequest) {
+            accountService.resetPassword(resetRequest.getToken(), resetRequest.getNewPassword());
+            return ResponseEntity.ok("Password reset successfully.");
+        }
+
 }

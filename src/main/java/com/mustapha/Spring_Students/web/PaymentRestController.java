@@ -2,14 +2,9 @@ package com.mustapha.Spring_Students.web;
 
 import com.mustapha.Spring_Students.dtos.NewPaymentDTO;
 import com.mustapha.Spring_Students.dtos.PaymentDTO;
-import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.enums.PaymentStatus;
-import com.mustapha.Spring_Students.enums.PaymentType;
 import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
-import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
-import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.service.PaymentService;
-import com.mustapha.Spring_Students.service.StudentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -18,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 @Slf4j
 @CrossOrigin("*")
@@ -28,7 +22,7 @@ public class PaymentRestController {
     private PaymentService paymentService;
 
     @GetMapping("/payments")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")
     public List<PaymentDTO> AllPayments(){
        return paymentService.getPaymentList();
     }

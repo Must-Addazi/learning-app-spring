@@ -11,4 +11,6 @@ public interface AccountService {
     AppUser loadUserByUsername(String username);
     AppUser updateUsername(String username);
     AppUser upadatePassword(String username,String password , String confirmPassword);
+    Boolean generatePasswordResetToken(String email);
+    Boolean resetPassword(String token, String newPassword);
 }

@@ -78,66 +78,96 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public StudentDTO saveStudent(MultipartFile file,MultipartFile bacFile,MultipartFile diplomaFile,MultipartFile profile, @Valid NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
-        Path path= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles");
-        if(!Files.exists(path)){
-            Files.createDirectories(path);
-        }
-        Path pathBac= Paths.get(System.getProperty("user.home"),"students-app-files","BacFiles");
-        if(!Files.exists(pathBac)){
-            Files.createDirectories(pathBac);
-        }
-        Path pathDiploma = Paths.get(System.getProperty("user.home"),"students-app-files","DiplomaFiles");
-        if(!Files.exists(pathDiploma)){
-            Files.createDirectories(pathDiploma);
-        }
-        Path pathProfile= Paths.get(System.getProperty("user.home"),"students-app-files","profileFiles");
-        if(!Files.exists(pathProfile)){
-            Files.createDirectories(pathProfile);
-        }
-        Program program=programRepository.findById(newStudentDTO.getProgramID()).get();
+    public StudentDTO saveStudent(MultipartFile file, MultipartFile bacFile, MultipartFile diplomaFile, MultipartFile profile, @Valid NewStudentDTO newStudentDTO)
+            throws IOException, ProgramNotFoundException {
+        Path baseDir = Paths.get(System.getProperty("user.home"), "students-app-files");
+        Path cinDir = createDirectoryIfNotExists(baseDir.resolve("CINFiles"));
+        Path bacDir = createDirectoryIfNotExists(baseDir.resolve("BacFiles"));
+        Path diplomaDir = createDirectoryIfNotExists(baseDir.resolve("DiplomaFiles"));
+        Path profileDir = createDirectoryIfNotExists(baseDir.resolve("profileFiles"));
+
+        Program program = programRepository.findById(newStudentDTO.getProgramID())
+                .orElseThrow(() -> new ProgramNotFoundException("Program not found with ID: " + newStudentDTO.getProgramID()));
+
         StudentDTO studentDTO = mapper.fromNewStudentDTO(newStudentDTO);
         studentDTO.setProgramDTO(mapper.fromProgram(program));
         studentDTO.setId(UUID.randomUUID().toString());
         studentDTO.setAmountPaid(0);
-        String CinFileID;
-        String bacFileID;
-        String diplomaFileID;
-        String photoID;
-        CinFileID = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN();
-        bacFileID = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN()+"bac";
-        diplomaFileID= studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN()+"diploma";
-        photoID= studentDTO.getFirstName() + studentDTO.getLastName()+studentDTO.getCIN();
-        Path filePath= Paths.get(System.getProperty("user.home"),"students-app-files","CINFiles",CinFileID+".pdf");
-        if(file !=null && Objects.requireNonNull(file.getOriginalFilename()).endsWith(".pdf"))
-            Files.copy(file.getInputStream(),filePath, StandardCopyOption.REPLACE_EXISTING);
-        Path bacPath= Paths.get(System.getProperty("user.home"),"students-app-files","BacFiles",bacFileID+".pdf");
-        if(bacFile !=null && Objects.requireNonNull(bacFile.getOriginalFilename()).endsWith(".pdf"))
-            Files.copy(bacFile.getInputStream(),bacPath,StandardCopyOption.REPLACE_EXISTING);
 
-        Path diplomaPath= Paths.get(System.getProperty("user.home"),"students-app-files","DiplomaFiles",diplomaFileID+".pdf");
-        if(diplomaFile !=null && Objects.requireNonNull(diplomaFile.getOriginalFilename()).endsWith(".pdf"))
-            Files.copy(diplomaFile.getInputStream(),diplomaPath,StandardCopyOption.REPLACE_EXISTING);
+        String baseFileName = studentDTO.getFirstName() + studentDTO.getLastName() + studentDTO.getCIN();
+        String cinFileName = baseFileName + ".pdf";
+        String bacFileName = baseFileName + "bac.pdf";
+        String diplomaFileName = baseFileName + "diploma.pdf";
 
-        if (profile != null && (Objects.requireNonNull(profile.getOriginalFilename()).endsWith(".jpg") || profile.getOriginalFilename().endsWith(".png"))) {
-            Path imagePath = Paths.get(System.getProperty("user.home"), "students-app-files", "profileFiles", photoID + getFileExtension(profile));
-            Files.copy(profile.getInputStream(), imagePath,StandardCopyOption.REPLACE_EXISTING);
-            studentDTO.setPhoto(imagePath.toUri().toString());
+        studentDTO.setPhotoCIN(saveFile(file, cinDir.resolve(cinFileName)));
+        studentDTO.setBacFile(saveFile(bacFile, bacDir.resolve(bacFileName)));
+        studentDTO.setDiplomaFile(saveFile(diplomaFile, diplomaDir.resolve(diplomaFileName)));
+        if (profile != null) {
+            String profileFileName = baseFileName + getFileExtension(profile);
+            studentDTO.setPhoto(saveFile(profile, profileDir.resolve(profileFileName)));
         }
+
         Student student = mapper.fromStudentDTO(studentDTO);
-        student.setPhotoCIN(filePath.toUri().toString());
-        student.setBacFile(bacPath.toUri().toString());
-        student.setDiplomaFile(diplomaPath.toUri().toString());
         student.setConvene(false);
         student.setSelected(false);
         Student savedStudent = studentRepository.save(student);
+
         String randomPassword = generateRandomPassword();
-        AppUser appUser= accountService.addNewUser(studentDTO.getEmail(),randomPassword,randomPassword);
-        accountService.addRoleToUser(appUser.getUsername(),"USER");
-        emailService.sendEmail(studentDTO.getEmail(), "Subscription Validation", "Your password is "+randomPassword+" and your username is " + studentDTO.getEmail());
-        emailService.sendEmail(studentDTO.getProgramDTO().getResponsibleProgramDTO().getEmail(), "New Enrollment", "We inform you that a new student with CIN " + studentDTO.getCIN() + " has been enrolled. Please check your platform.");
+        AppUser appUser = accountService.addNewUser(studentDTO.getEmail(), randomPassword, randomPassword);
+        accountService.addRoleToUser(appUser.getUsername(), "USER");
+
+        sendEmailToStudent(studentDTO, randomPassword);
+        sendEmailToProgramResponsible(studentDTO);
+
         return mapper.fromStudent(savedStudent);
     }
+
+    private Path createDirectoryIfNotExists(Path dir) throws IOException {
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
+        return dir;
+    }
+
+    private String saveFile(MultipartFile file, Path destinationPath) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            return destinationPath.toUri().toString();
+        }
+        return null;
+    }
+
+    private void sendEmailToStudent(StudentDTO studentDTO, String randomPassword) {
+        String subject = "Subscription Validation";
+        String content = String.format(
+                "Dear %s %s,\n\n" +
+                        "Your account has been successfully created.\n\n" +
+                        "Username: %s\n" +
+                        "Password: %s\n\n" +
+                        "Please log in to the platform to complete your profile.\n\n" +
+                        "Best regards,\nThe Team",
+                studentDTO.getFirstName(), studentDTO.getLastName(), studentDTO.getEmail(), randomPassword
+        );
+        emailService.sendEmail(studentDTO.getEmail(), subject, content);
+    }
+
+    private void sendEmailToProgramResponsible(StudentDTO studentDTO) {
+        String subject = "New Enrollment Notification";
+        String content = String.format(
+                "Dear %s,\n\n" +
+                        "A new student has been enrolled in your program.\n\n" +
+                        "Student Details:\n" +
+                        "Name: %s %s\n" +
+                        "CIN: %s\n\n" +
+                        "Please log in to the platform to review the enrollment.\n\n" +
+                        "Best regards,\nThe Team",
+                studentDTO.getProgramDTO().getResponsibleProgramDTO().getName(),
+                studentDTO.getFirstName(), studentDTO.getLastName(),
+                studentDTO.getCIN()
+        );
+        emailService.sendEmail(studentDTO.getProgramDTO().getResponsibleProgramDTO().getEmail(), subject, content);
+    }
+
 
     private String generateRandomPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";

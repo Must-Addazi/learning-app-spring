@@ -31,8 +31,11 @@ C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mus
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\repositories\StudentRepository.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\entities\AppRole.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\entities\AppUser.java
+C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\entities\PasswordResetToken.java
+C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\entities\ResetPasswordRequest.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\repositories\AppRoleRepository.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\repositories\AppUserRepository.java
+C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\repositories\TokenRepository.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\SecurityConfig.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\SecurityController.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\service\AccountService.java

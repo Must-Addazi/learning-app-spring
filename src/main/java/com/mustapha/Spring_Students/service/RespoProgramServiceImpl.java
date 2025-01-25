@@ -27,6 +27,12 @@ public class RespoProgramServiceImpl implements RespoProgramService{
     }
 
     @Override
+    public ResponsibleProgram getRespoProgramByEmail(String email) {
+        return responsibleProgramRepository.findByEmail(email);
+
+    }
+
+    @Override
     public ResponsibleProgramDTO saveRespoProgram(ResponsibleProgramDTO responsibleProgramDTO) {
         responsibleProgramDTO.setId(UUID.randomUUID().toString());
         ResponsibleProgram responsibleProgram=mapper.fromResponsibleProgramDTO(responsibleProgramDTO);

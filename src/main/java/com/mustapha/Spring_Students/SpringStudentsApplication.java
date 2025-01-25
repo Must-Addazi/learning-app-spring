@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -34,12 +34,12 @@ public class SpringStudentsApplication {
 		SpringApplication.run(SpringStudentsApplication.class, args);
 	}
 
-		/*@Bean
-		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-			PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-			configurer.setLocation(new FileSystemResource(".env"));
-			return configurer;
-		}*/
+//		@Bean
+//		public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+//			PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+//			configurer.setLocation(new FileSystemResource(".env"));
+//			return configurer;
+//		}
 
 	@Bean
 	CommandLineRunner commandLineRunner(AccountService accountService){

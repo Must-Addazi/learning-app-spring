@@ -64,7 +64,7 @@ public class StudentRestController {
         return studentService.findByProgram(program);
     }
     @GetMapping("/findByProgramAndConvene/{programID}")
-      @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public List<StudentDTO> findByProgramAndConvene(@PathVariable(name ="programID" ) String program) throws ProgramNotFoundException {
         return studentService.findByProgramAndConvene(program);
     }
@@ -81,6 +81,7 @@ public class StudentRestController {
         return studentService.deleteStudent(id);
     }
     @GetMapping("/posterFile/{studentId}/{file}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
     public ResponseEntity<byte[]> getFile(@PathVariable String studentId, @PathVariable String file) {
         try {
             byte[] fileBytes = studentService.getFile(studentId,file);

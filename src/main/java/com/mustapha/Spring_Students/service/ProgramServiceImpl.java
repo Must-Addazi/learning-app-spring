@@ -1,12 +1,10 @@
 package com.mustapha.Spring_Students.service;
 
 import com.mustapha.Spring_Students.dtos.ProgramDTO;
-import com.mustapha.Spring_Students.dtos.StudentDTO;
 import com.mustapha.Spring_Students.entities.Program;
-import com.mustapha.Spring_Students.entities.Student;
-import com.mustapha.Spring_Students.exceptions.PaymentNotFoundException;
+import com.mustapha.Spring_Students.entities.ResponsibleProgram;
 import com.mustapha.Spring_Students.exceptions.ProgramNotFoundException;
-import com.mustapha.Spring_Students.exceptions.StudentNotFoundException;
+import com.mustapha.Spring_Students.exceptions.ResponsibleProgramNotFoundException;
 import com.mustapha.Spring_Students.mapping.Mapper;
 import com.mustapha.Spring_Students.repositories.ProgramRepository;
 import com.mustapha.Spring_Students.security.entities.AppUser;
@@ -26,7 +24,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -43,11 +40,19 @@ public class ProgramServiceImpl implements ProgramService{
     public ProgramDTO getProgram(String id) throws ProgramNotFoundException {
         return mapper.fromProgram(programRepository.findById(id).orElseThrow(()-> new ProgramNotFoundException("Program not Found "))) ;
     }
-    private String generateRandomPassword(int length) {
+
+    @Override
+    public ProgramDTO getProgramByRespo(String RespoEmail) throws ResponsibleProgramNotFoundException {
+        ResponsibleProgram responsibleProgram= respoProgramService.getRespoProgramByEmail(RespoEmail);
+        Program program = programRepository.findByResponsibleProgram(responsibleProgram);
+        return mapper.fromProgram(program);
+    }
+
+    private String generateRandomPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
         StringBuilder password = new StringBuilder();
         SecureRandom random = new SecureRandom();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < 10; i++) {
             password.append(chars.charAt(random.nextInt(chars.length())));
         }
         return password.toString();
@@ -67,7 +72,7 @@ public class ProgramServiceImpl implements ProgramService{
         programDTO.setPosterFile(filePath.toUri().toString());
         Program program=mapper.fromProgramDTO(programDTO);
         program.setResponsibleProgram(mapper.fromResponsibleProgramDTO(programDTO.getResponsibleProgramDTO()));
-        String randomPassword = generateRandomPassword(10);
+        String randomPassword = generateRandomPassword();
         AppUser appUser= accountService.addNewUser(programDTO.getResponsibleProgramDTO().getEmail(),randomPassword,randomPassword);
         accountService.addRoleToUser(appUser.getUsername(),"USER");
         accountService.addRoleToUser(appUser.getUsername(),"ADMIN");
@@ -104,7 +109,7 @@ public class ProgramServiceImpl implements ProgramService{
     }
 
     @Override
-    public Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, StudentNotFoundException, PaymentNotFoundException {
+    public Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException {
         Program program = programRepository.findById(programId)
                 .orElseThrow(() -> new ProgramNotFoundException("Program not found with ID: " + programId));
 
@@ -141,7 +146,7 @@ public class ProgramServiceImpl implements ProgramService{
     public void updateFile(Program program, MultipartFile file, String fileType) throws IOException {
         String baseDir = System.getProperty("user.home") + File.separator + "students-app-files";
         Path filePath = handleFileUpload(file, baseDir, fileType.equals("poster") ? "posterFiles" : "BacFiles",
-                program.getName() + program.getId() + fileType, ".pdf");
+                program.getName() + program.getId() + fileType);
 
         if (fileType.equals("poster")) {
             program.setPosterFile(filePath.toUri().toString());
@@ -150,7 +155,7 @@ public class ProgramServiceImpl implements ProgramService{
         }
     }
 
-    private Path handleFileUpload(MultipartFile file, String baseDir, String subFolder, String fileName, String extension) throws IOException {
+    private Path handleFileUpload(MultipartFile file, String baseDir, String subFolder, String fileName) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IOException("File is empty.");
         }
@@ -165,7 +170,7 @@ public class ProgramServiceImpl implements ProgramService{
             Files.createDirectories(dirPath);
         }
 
-        Path filePath = dirPath.resolve(fileName + extension);
+        Path filePath = dirPath.resolve(fileName + ".pdf");
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         return filePath;
     }
