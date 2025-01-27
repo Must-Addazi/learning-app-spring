@@ -87,7 +87,7 @@ public class ProgramPosterServiceImpl implements ProgramPosterService{
         try {
             if (imagePath != null && !imagePath.isEmpty()) {
                 if (imagePath.startsWith("file:///")) {
-                    imagePath = imagePath.substring(8);
+                    imagePath = imagePath.substring(7);
                 }
                 byte[] imageBytes = Files.readAllBytes(Path.of(imagePath));
                 return Base64.getEncoder().encodeToString(imageBytes);
