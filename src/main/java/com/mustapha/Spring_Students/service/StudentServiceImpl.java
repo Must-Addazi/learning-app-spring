@@ -58,7 +58,7 @@ public class StudentServiceImpl implements StudentService{
         try {
             if (imagePath != null && !imagePath.isEmpty()) {
                 if (imagePath.startsWith("file:///")) {
-                    imagePath = imagePath.substring(8);
+                    imagePath = imagePath.substring(7);
                 }
                 byte[] imageBytes = Files.readAllBytes(Path.of(imagePath));
                 return Base64.getEncoder().encodeToString(imageBytes);
@@ -226,7 +226,6 @@ public class StudentServiceImpl implements StudentService{
         Program program=programRepository.findById(newstudentDTO.getProgramID()).get();
         student.setProgram(program);
         Student upStudent= studentRepository.save(student);
-        log.info("student DTO "+newstudentDTO.toString() );
         return mapper.fromStudent(upStudent);
     }
 
