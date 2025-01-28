@@ -105,7 +105,7 @@ public class AccountServiceImpl implements AccountService{
             PasswordResetToken resetToken = PasswordResetToken.builder().token(token).appUser(appUser).expiryDate(LocalDateTime.now().plusMinutes(5)).build();
             tokenRepository.save(resetToken);
 
-            String resetUrl = "https://fcensas-3u1p.vercel.app/reset-password?token=" + token;
+            String resetUrl = "https://fcensas-addazi.vercel.app/reset-password?token=" + token;
           //String resetUrl = "http://localhost:8080/reset-password?token=" + token;
 
         emailService.sendEmail(email, "Reset your password", "Click the link to reset your password: " + resetUrl);
