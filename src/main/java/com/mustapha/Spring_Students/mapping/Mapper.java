@@ -3,9 +3,11 @@ package com.mustapha.Spring_Students.mapping;
 import com.mustapha.Spring_Students.dtos.*;
 import com.mustapha.Spring_Students.entities.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
+//@Service
 public class Mapper {
     public ModuleDTO fromModule(CModule cModule){
         ModuleDTO moduleDTO = new ModuleDTO();

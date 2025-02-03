@@ -22,7 +22,7 @@ import java.util.UUID;
 @Service
 @Transactional
 public class ModuleServiceImpl implements ModuleService {
-    private ModuleRepository moduleRepository;
+    private final ModuleRepository moduleRepository;
     private ProgramRepository programRepository;
     private Mapper mapper;
 
