@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", message);
-
+        System.out.println(errorResponse);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
