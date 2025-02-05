@@ -56,13 +56,15 @@ public class SecurityController {
         @PostMapping("/forgot-password")
         public Boolean forgotPassword(@RequestBody Map<String, String> request) {
             String email = request.get("email");
-           return accountService.generatePasswordResetToken(email);
+            return accountService.generatePasswordResetToken(email);
         }
 
         @PostMapping("/reset-password")
-        public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetRequest) {
-            accountService.resetPassword(resetRequest.getToken(), resetRequest.getNewPassword());
-            return ResponseEntity.ok("Password reset successfully.");
+        public Boolean resetPassword(@RequestBody ResetPasswordRequest resetRequest) {
+          Boolean reset;
+          reset=  accountService.resetPassword(resetRequest.getToken(), resetRequest.getNewPassword());
+            System.out.println("password "+reset);
+            return reset;
         }
 
 }

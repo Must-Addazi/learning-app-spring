@@ -8,6 +8,7 @@ import com.mustapha.Spring_Students.security.repositories.AppUserRepository;
 import com.mustapha.Spring_Students.security.repositories.TokenRepository;
 import com.mustapha.Spring_Students.service.EmailService;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,11 @@ import java.util.UUID;
 @Transactional
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService{
-    private AppRoleRepository appRoleRepository;
-    private AppUserRepository appUserRepository;
-    private TokenRepository tokenRepository;
-    private EmailService emailService;
-    private PasswordEncoder passwordEncoder;
+    private final AppRoleRepository appRoleRepository;
+    private final AppUserRepository appUserRepository;
+    private final TokenRepository tokenRepository;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public AppUser addNewUser(String username, String password, String confirmPassword) {
         AppUser appUser=appUserRepository.findByUsername(username);
@@ -99,14 +100,15 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public Boolean generatePasswordResetToken(String email) {
             AppUser appUser = loadUserByUsername(email);
-            if(appUser ==null)
+            if(appUser == null)
                 return false;
+            tokenRepository.deleteByAppUser(appUser);
             String token = UUID.randomUUID().toString();
             PasswordResetToken resetToken = PasswordResetToken.builder().token(token).appUser(appUser).expiryDate(LocalDateTime.now().plusMinutes(5)).build();
             tokenRepository.save(resetToken);
 
             String resetUrl = "https://fcensas-addazi.vercel.app/reset-password?token=" + token;
-          //String resetUrl = "http://localhost:8080/reset-password?token=" + token;
+          //String resetUrl = "http://localhost:4200/reset-password?token=" + token;
 
         emailService.sendEmail(email, "Reset your password", "Click the link to reset your password: " + resetUrl);
        return true;
@@ -114,7 +116,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Boolean resetPassword(String token, String newPassword) {
-        System.out.println("token is" +token);
+        System.out.println("token is " +token);
         PasswordResetToken resetToken = tokenRepository.findByToken(token);
                 if(resetToken==null)
                     throw new IllegalArgumentException("Invalid token");
@@ -128,5 +130,10 @@ public class AccountServiceImpl implements AccountService{
         appUserRepository.save(appUser);
         tokenRepository.delete(resetToken);
         return true;
+    }
+
+    @Scheduled(fixedRate = 3600000 )
+    public void cleanUpExpiredTokens(){
+        tokenRepository.deleteExpiredTokens();
     }
 }
