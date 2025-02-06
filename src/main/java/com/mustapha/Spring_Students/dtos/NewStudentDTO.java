@@ -24,5 +24,4 @@ public class NewStudentDTO {
     private Double noteBac;
     private Double noteDiploma;
     private String programID;
-    private String captcha;
 }

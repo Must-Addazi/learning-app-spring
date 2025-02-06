@@ -23,7 +23,6 @@ com\mustapha\Spring_Students\dtos\ProgramDTO$ProgramDTOBuilder.class
 com\mustapha\Spring_Students\service\PaymentServiceImpl.class
 com\mustapha\Spring_Students\exceptions\PaymentNotFoundException.class
 com\mustapha\Spring_Students\dtos\ResponsibleProgramDTO$ResponsibleProgramDTOBuilder.class
-com\mustapha\Spring_Students\service\CaptchaService.class
 com\mustapha\Spring_Students\service\ProgramPosterServiceImpl.class
 com\mustapha\Spring_Students\security\repositories\AppUserRepository.class
 com\mustapha\Spring_Students\dtos\NewProgram.class
