@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
         return buildResponse("You do not have permission to access this resource.", HttpStatus.FORBIDDEN);
     }
 
-    // 🔥 500 Internal Server Error
+    // 500 Internal Server Error
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGlobalException(Exception ex) {
         log.error("Unhandled Exception [{}]: {}", ex.getClass().getSimpleName(), ex.getMessage(), ex);

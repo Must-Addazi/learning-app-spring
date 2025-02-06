@@ -21,7 +21,8 @@ public class NewStudentDTO {
     private String email;
     private String phone;
     private LocalDate birthDate;
-    private Double NoteBac;
-    private Double NoteDiploma;
+    private Double noteBac;
+    private Double noteDiploma;
     private String programID;
+    private String captcha;
 }

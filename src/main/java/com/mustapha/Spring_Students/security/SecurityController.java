@@ -2,8 +2,8 @@ package com.mustapha.Spring_Students.security;
 
 import com.mustapha.Spring_Students.security.entities.ResetPasswordRequest;
 import com.mustapha.Spring_Students.security.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.mustapha.Spring_Students.service.CaptchaService;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,20 +21,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/auth")
 public class SecurityController {
-    @Autowired
     public AuthenticationManager authenticationManager;
-    @Autowired
     public JwtEncoder jwtEncoder;
-    @Autowired
     private AccountService accountService;
+    private CaptchaService captchaService;
     @GetMapping("/profile")
     public Authentication authentication( Authentication authentication ){
         return authentication;
     }
     @PostMapping("/login")
-    public Map<String,String> login(String username, String password){
+    public Map<String,String> login(String username, String password , String captcha){
+                if (!captchaService.verifyCaptcha(captcha)) {
+                    return Map.of();
+                }
         Authentication authentication=  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
         Instant instant = Instant.now();
         String scope=  authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" "));

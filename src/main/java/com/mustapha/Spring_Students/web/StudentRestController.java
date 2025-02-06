@@ -69,11 +69,11 @@ public class StudentRestController {
         return studentService.findByProgramAndConvene(program);
     }
     @PostMapping(value = "/saveStudent", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public StudentDTO saveStudentDTO(@RequestParam("photoCIN") MultipartFile CinFile,
+    public StudentDTO saveStudentDTO(@RequestParam("photoCIN") MultipartFile cinFile,
                                      @RequestParam("bacFile") MultipartFile bacFile,
                                      @RequestParam("diplomaFile") MultipartFile diplomaFile,
                                      @RequestParam(value = "profile", required = false) MultipartFile profile, NewStudentDTO newStudentDTO) throws IOException, ProgramNotFoundException {
-      return studentService.saveStudent(CinFile,bacFile,diplomaFile,profile,newStudentDTO);
+      return studentService.saveStudent(cinFile,bacFile,diplomaFile,profile,newStudentDTO);
     }
     @DeleteMapping("/deleteStudent/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")

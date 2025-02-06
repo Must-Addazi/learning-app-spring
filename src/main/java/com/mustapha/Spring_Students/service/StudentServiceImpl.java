@@ -44,6 +44,7 @@ public class StudentServiceImpl implements StudentService{
     private PaymentService paymentService;
     private AccountService accountService;
     private EmailService emailService;
+    private CaptchaService captchaService;
     private Mapper mapper;
     @Override
     public List<StudentDTO> getStudentList() {
@@ -80,6 +81,8 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public StudentDTO saveStudent(MultipartFile file, MultipartFile bacFile, MultipartFile diplomaFile, MultipartFile profile, @Valid NewStudentDTO newStudentDTO)
             throws IOException, ProgramNotFoundException {
+        if(!captchaService.verifyCaptcha(newStudentDTO.getCaptcha()))
+            return null;
         Path baseDir = Paths.get(System.getProperty("user.home"), "students-app-files");
         Path cinDir = createDirectoryIfNotExists(baseDir.resolve("CINFiles"));
         Path bacDir = createDirectoryIfNotExists(baseDir.resolve("BacFiles"));
