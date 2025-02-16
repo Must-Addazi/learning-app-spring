@@ -11,7 +11,7 @@ public interface RespoProgramService {
     ResponsibleProgram getRespoProgramByEmail(String id) throws ResponsibleProgramNotFoundException;
     ResponsibleProgramDTO saveRespoProgram(ResponsibleProgramDTO responsibleProgramDTO);
     List<ResponsibleProgramDTO> getResposProgram();
-    void deleteRespoProgram(String id);
+    void deleteRespoProgram(String id) throws ResponsibleProgramNotFoundException;
     ResponsibleProgramDTO updateRespo(String id,ResponsibleProgramDTO responsibleProgramDTO);
 
 }

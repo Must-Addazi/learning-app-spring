@@ -2,7 +2,6 @@ package com.mustapha.Spring_Students.security;
 
 import com.mustapha.Spring_Students.security.service.UserDetailServiceImpl;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +40,6 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig{
- //   @Value("${jwt.secret}")
     @Value("${JWT_SECRET}")
     private String secretKey;
     @Autowired

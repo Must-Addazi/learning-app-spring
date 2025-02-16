@@ -21,7 +21,7 @@ public interface ProgramService {
 
     byte[] getFile(String programId,String file) throws IOException, ProgramNotFoundException;
 
-    Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, StudentNotFoundException, PaymentNotFoundException;
+    Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, StudentNotFoundException, PaymentNotFoundException, ResponsibleProgramNotFoundException;
 
     ProgramDTO updateProgram(ProgramDTO programDTO, MultipartFile poster, MultipartFile timing) throws  IOException, ProgramNotFoundException;
 

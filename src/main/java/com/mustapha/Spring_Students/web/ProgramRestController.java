@@ -75,7 +75,7 @@ public class ProgramRestController {
     }
     @DeleteMapping("/deleteProgram/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_SUPER_ADMIN')")
-    public Boolean deleteProgram(@PathVariable String id) throws StudentNotFoundException, IOException, PaymentNotFoundException, ProgramNotFoundException {
+    public Boolean deleteProgram(@PathVariable String id) throws StudentNotFoundException, IOException, PaymentNotFoundException, ProgramNotFoundException, ResponsibleProgramNotFoundException {
         log.info("programID "+id);
         return programService.deleteProgram(id);
     }

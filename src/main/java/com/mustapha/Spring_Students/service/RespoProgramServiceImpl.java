@@ -46,7 +46,12 @@ public class RespoProgramServiceImpl implements RespoProgramService{
     }
 
     @Override
-    public void deleteRespoProgram(String id) {
+    public void deleteRespoProgram(String id) throws ResponsibleProgramNotFoundException {
+        System.out.println("delete respo");
+        ResponsibleProgramDTO responsibleProgramDTO= getRespoProgram(id);
+        accountService.removeRoleFromUser(responsibleProgramDTO.getEmail(),"ADMIN");
+        accountService.removeRoleFromUser(responsibleProgramDTO.getEmail(),"USER");
+        accountService.removeUser(responsibleProgramDTO.getEmail());
         responsibleProgramRepository.deleteById(id);
     }
 

@@ -109,7 +109,7 @@ public class ProgramServiceImpl implements ProgramService{
     }
 
     @Override
-    public Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException {
+    public Boolean deleteProgram(String programId) throws IOException, ProgramNotFoundException, ResponsibleProgramNotFoundException {
         Program program = programRepository.findById(programId)
                 .orElseThrow(() -> new ProgramNotFoundException("Program not found with ID: " + programId));
 
