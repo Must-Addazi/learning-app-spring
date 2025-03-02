@@ -29,4 +29,5 @@ public interface StudentService {
     StudentDTO conveneStudent(String studentId);
     List<StudentDTO> conveneStudentList();
     StudentDTO selectStudent(String studentId);
+    byte[] generateConvocationPdf(String studentId);
 }

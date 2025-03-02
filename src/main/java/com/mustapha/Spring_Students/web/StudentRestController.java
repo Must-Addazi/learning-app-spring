@@ -140,4 +140,15 @@ public class StudentRestController {
         return studentService.selectStudent(id);
     }
 
+    @GetMapping("/convocation/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_USER')")
+    public ResponseEntity<byte[]> generatePdf(@PathVariable String id) {
+        byte[] pdf = studentService.generateConvocationPdf(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=convocation.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
 }

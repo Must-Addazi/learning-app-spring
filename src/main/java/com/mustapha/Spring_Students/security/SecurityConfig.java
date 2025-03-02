@@ -32,6 +32,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 import javax.crypto.spec.SecretKeySpec;
 import javax.sql.DataSource;
 
@@ -45,7 +46,8 @@ public class SecurityConfig{
     @Autowired
     @Lazy
      private UserDetailServiceImpl userDetailServiceImpl;
-   // @Bean
+
+    // @Bean
     public JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource){
         return new JdbcUserDetailsManager(dataSource);
     }
@@ -73,7 +75,6 @@ public class SecurityConfig{
                .cors(Customizer.withDefaults())
                .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
                .userDetailsService(userDetailServiceImpl)
-           //    .authorizeHttpRequests(ar->ar.anyRequest().permitAll())
                .build();
     }
     @Bean
@@ -82,12 +83,10 @@ public class SecurityConfig{
     }
     @Bean
     public JwtEncoder jwtEncoder(){
-        //String secretKey="a8f3Lz7&KqW9$Nm5Xt2@YvP4QdRc6*TjZg1#HbMp%X3kLr9!CfVz8&Wt2jPq@Yd";
         return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey.getBytes()));
     }
     @Bean
     public JwtDecoder jwtDecoder(){
-        // String secretKey="a8f3Lz7&KqW9$Nm5Xt2@YvP4QdRc6*TjZg1#HbMp%X3kLr9!CfVz8&Wt2jPq@Yd";
         SecretKeySpec secretKeySpec= new SecretKeySpec(secretKey.getBytes(),"HS512");
         return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS512).build();
     }
