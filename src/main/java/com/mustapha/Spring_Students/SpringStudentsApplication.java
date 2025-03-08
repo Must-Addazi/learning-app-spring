@@ -34,12 +34,12 @@ public class SpringStudentsApplication {
 		SpringApplication.run(SpringStudentsApplication.class, args);
 	}
 
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-		configurer.setLocation(new FileSystemResource(".env"));
-		return configurer;
-	}
+//	@Bean
+//	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+//		PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+//		configurer.setLocation(new FileSystemResource(".env"));
+//		return configurer;
+//	}
 
 	@Bean
 	CommandLineRunner commandLineRunner(AccountService accountService) {

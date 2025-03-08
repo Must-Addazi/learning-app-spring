@@ -7,6 +7,7 @@ com\mustapha\Spring_Students\service\StudentService.class
 com\mustapha\Spring_Students\entities\ProgramPoster.class
 com\mustapha\Spring_Students\dtos\ModuleDTO$ModuleDTOBuilder.class
 com\mustapha\Spring_Students\security\entities\PasswordResetToken.class
+com\mustapha\Spring_Students\web\MeetingController.class
 com\mustapha\Spring_Students\dtos\ProgramDTO.class
 com\mustapha\Spring_Students\entities\ProgramPoster$ProgramPosterBuilder.class
 com\mustapha\Spring_Students\web\ModuleRestController.class
@@ -45,9 +46,11 @@ com\mustapha\Spring_Students\security\repositories\AppRoleRepository.class
 com\mustapha\Spring_Students\dtos\ProgramPosterDTO$ProgramPosterDTOBuilder.class
 com\mustapha\Spring_Students\enums\PaymentType.class
 com\mustapha\Spring_Students\security\entities\AppRole$AppRoleBuilder.class
+com\mustapha\Spring_Students\entities\Meeting.class
 com\mustapha\Spring_Students\dtos\ProgramPosterDTO.class
 com\mustapha\Spring_Students\repositories\ModuleRepository.class
 com\mustapha\Spring_Students\security\service\AccountService.class
+com\mustapha\Spring_Students\service\MeetingService.class
 com\mustapha\Spring_Students\service\ModuleServiceImpl.class
 com\mustapha\Spring_Students\web\PaymentRestController.class
 com\mustapha\Spring_Students\repositories\ResponsibleProgramRepository.class

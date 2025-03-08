@@ -9,6 +9,7 @@ C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mus
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\dtos\ResponsibleProgramDTO.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\dtos\StudentDTO.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\entities\CModule.java
+C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\entities\Meeting.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\entities\Payment.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\entities\Program.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\entities\ProgramPoster.java
@@ -42,6 +43,7 @@ C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mus
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\service\AccountServiceImpl.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\security\service\UserDetailServiceImpl.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\service\EmailService.java
+C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\service\MeetingService.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\service\ModuleService.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\service\ModuleServiceImpl.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\service\PaymentService.java
@@ -55,6 +57,7 @@ C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mus
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\service\StudentService.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\service\StudentServiceImpl.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\SpringStudentsApplication.java
+C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\web\MeetingController.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\web\ModuleRestController.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\web\PaymentRestController.java
 C:\Users\h\IdeaProjects\formation-continue\Spring_Students\src\main\java\com\mustapha\Spring_Students\web\ProgramPosterRestController.java
